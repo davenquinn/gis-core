@@ -1,0 +1,26 @@
+@import "includes/leaflet";
+@import "includes/leaflet-draw";
+
+.leaflet-container {
+  .leaflet-control-layers-toggle {
+    background: none;
+    &:before {
+      font-family: FontAwesome;
+      content: "\f0c9";
+    }
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    font-size: 22px;
+    color: black;
+  }
+}
+
+.leaflet-control, .leaflet-control a {
+  border-radius: 0 !important;
+}
+
+.leaflet-control-scale-line {
+  box-sizing: content-box;
+}
