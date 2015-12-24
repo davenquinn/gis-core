@@ -1,6 +1,4 @@
-Spine = require "spine"
 $ = require "jquery"
-Spine.$ = $
 L = require "leaflet"
 path = require 'path'
 global.L = L
@@ -8,38 +6,22 @@ global.L = L
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
 
-class Map extends Spine.Controller
-  class: "viewer"
+class Map
   defaults:
     tileSize: 256
-  constructor: ->
-    super
-    @config = app.config.map
+  constructor: (@el,@config)->
     for k,v of @defaults
       @config[k] = v unless @config[k]?
-
-    @config.layers.forEach (d)->
-      # Make paths relative to config file
-      d.filename = app.config.path d.filename
 
     @visibleControls = ["layers","scale"] if not @visibleControls?
     @layers =
       baseMaps: {}
       overlayMaps: {}
-    @render()
-
-  render: ->
     @setupMap()
 
   invalidateSize: =>
     # Shim for flexbox
     @leaflet.invalidateSize()
-
-  setHeight: ->
-    @el.height window.innerHeight
-
-  extentChanged: =>
-    @trigger "extents", @leaflet.getBounds()
 
   setupMap: =>
 
@@ -56,14 +38,9 @@ class Map extends Spine.Controller
       boxZoom: false
       continuousWorld: true
       debounceMoveend: true
-      boxSelect: true
 
     @addMapnikLayers()
     @createControls()
-
-    if @wmts?
-      getData()
-        .then @addWMTSLayers
 
     @leaflet.on "viewreset dragend", @extentChanged
 

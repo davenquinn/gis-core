@@ -29,6 +29,10 @@ module.exports = (fn)->
       p = path.join dir,fn
       return path.normalize p
 
+  cfg.map.layers.forEach (d)->
+    # Make paths relative to config file
+    d.filename = cfg.path d.filename
+
   return cfg
 
 
