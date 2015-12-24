@@ -1,0 +1,28 @@
+{
+  "name": "gis-core",
+  "version": "0.0.1",
+  "description": "An mapnik-backed viewer for arbitrary GIS data",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "/Users/Daven/Development/Naukluft/software/../../Repositories/gis-core.git"
+  },
+  "author": "Daven Quinn",
+  "license": "MIT",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.1",
+    "node-sass": "^3.4.2"
+  },
+  "dependencies": {
+    "coffee-script": "^1.10.0",
+    "js-yaml": "^3.4.6",
+    "leaflet": "^1.0.0-beta.2",
+    "mapnik-pool": "^0.1.2",
+    "minimist": "^1.2.0",
+    "proj4": "^2.3.12"
+  }
+}

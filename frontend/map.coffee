@@ -1,10 +1,9 @@
 Spine = require "spine"
 $ = require "jquery"
+Spine.$ = $
 L = require "leaflet"
 path = require 'path'
 global.L = L
-require "leaflet-draw"
-CacheDatastore = require "../data/cache"
 
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
@@ -22,8 +21,6 @@ class Map extends Spine.Controller
     @config.layers.forEach (d)->
       # Make paths relative to config file
       d.filename = app.config.path d.filename
-
-    @settings = new CacheDatastore 'map-visible-layers'
 
     @visibleControls = ["layers","scale"] if not @visibleControls?
     @layers =
@@ -52,7 +49,7 @@ class Map extends Spine.Controller
       maxResolution: @config.resolution.max # m/px
       bounds: @config.bounds
 
-    @leaflet = new L.Map @el[0],
+    @leaflet = new L.Map @el,
       center: @config.center
       zoom: 2
       crs: projection
@@ -74,7 +71,7 @@ class Map extends Spine.Controller
 
     layers = @config.layers
 
-    @visibleLayers = @settings.get() or []
+    @visibleLayers = []
 
     for cfg in layers
       fn = cfg.filename
@@ -97,7 +94,6 @@ class Map extends Spine.Controller
       # Update cached layer information when
       # map is changed
       @visibleLayers = (v.id for k,v of @leaflet._layers)
-      @settings.set @visibleLayers
 
     @leaflet.on 'layeradd layerremove', _
 
