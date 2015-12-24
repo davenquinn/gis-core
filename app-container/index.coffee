@@ -1,7 +1,10 @@
 app = require 'app'
 BrowserWindow = require 'browser-window'
+mn = require 'minimist'
 
+args = mn process.argv.slice(2)
 setupConfig = require './config'
+
 
 # Keep a global reference of the window object, if you don't, the window will
 # be closed automatically when the JavaScript object is garbage collected.
@@ -34,7 +37,7 @@ startApp = (url)->
 
 # Right now, the environment variable "NODE_MAP_CONFIG"
 # should point to the config file
-config = setupConfig '../map-server/viewer-config.yaml'
+config = setupConfig args._[0]
 app.config = config
 
 app.on 'ready', -> startApp "file://#{__dirname}/main.html"
