@@ -1,6 +1,17 @@
 @import "includes/leaflet";
 @import "includes/leaflet-draw";
 
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+#main {
+  height: 100vh;
+}
+
+
+
 .leaflet-container {
   .leaflet-control-layers-toggle {
     background: none;

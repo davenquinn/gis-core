@@ -37,5 +37,5 @@ startApp = (url)->
 config = setupConfig '../map-server/viewer-config.yaml'
 app.config = config
 
-app.on 'ready', -> startApp './main.html'
+app.on 'ready', -> startApp "file://#{__dirname}/main.html"
 
