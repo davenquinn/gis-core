@@ -1,7 +1,8 @@
 remote = require 'remote'
-Map = require './map'
 
 el = document.querySelector '#main'
 window.app = remote.require "app"
+
+Map = require './map'
 
 new Map el: el
