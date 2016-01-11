@@ -56,4 +56,10 @@ class MapnikLayer extends L.GridLayer
 
     return tile
 
+  onAdd: (map)->
+    console.log "Adding to ", map
+    if not @options.tileSize?
+      @options.tileSize = map.config.tileSize or 256
+    super map
+
 module.exports = MapnikLayer

@@ -5,4 +5,5 @@ window.app = remote.require "app"
 
 Map = require './map'
 
-new Map el: el
+new Map el, app.config.map
+
