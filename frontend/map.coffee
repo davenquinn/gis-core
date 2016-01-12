@@ -1,22 +1,21 @@
-$ = require "jquery"
 L = require "leaflet"
-path = require 'path'
-global.L = L
 configFromFile = require './config'
-
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
 
 class Map extends L.Map
   constructor: (el,options)->
-    window.map = @
     if options.configFile?
       cfg = configFromFile(options.configFile).map
       delete options.configFile
 
       # Keep mapnik layer configs separate from
       # other layers (this is probably temporary)
-      options.mapnikLayers = cfg.layers
+      lyrs = {}
+      for lyr in cfg.layers
+        fn = lyr.filename
+        lyrs[lyr.name] = new MapnikLayer lyr.filename
+      options.mapnikLayers = lyrs
       delete cfg.layers
 
       # Set options (values defined in code
@@ -37,14 +36,22 @@ class Map extends L.Map
 
     console.log options
     @initialize el, options
-    @setupBaseLayers()
+    @addMapnikLayers()
 
-  setupBaseLayers: ->
-    @baseLayers = {}
+  addMapnikLayers: (name)->
     layers = @options.mapnikLayers
-    for cfg in layers
-      l = new MapnikLayer cfg.filename
-      @baseLayers[cfg.name] = l
+    for k,l of layers
+      if name?
+        # Add only specified layer
+        continue unless k == name
       l.addTo @
+
+  addLayerControl: (baseLayers, overlayLayers)->
+    lyrs = @options.mapnikLayers
+    for k,v of baseLayers
+      lyrs[k] = v
+    ctl = new L.Control.Layers lyrs, overlayLayers,
+      position: "topleft"
+    ctl.addTo @
 
 module.exports = Map

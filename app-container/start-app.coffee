@@ -12,15 +12,10 @@ map = new gis.Map el,
   continuousWorld: true
   debounceMoveend: true
 
-layers = new L.Control.Layers map.baseLayers, {},
-  position: "topleft"
+map.addLayerControl()
 
 scale = L.control.scale
   maxWidth: 250,
   imperial: false
-
 scale.addTo map
-layers.addTo map
-
-console.log map
 
