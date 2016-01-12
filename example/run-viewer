@@ -1,0 +1,3 @@
+#!/bin/bash
+
+$(npm bin)/electron ../main.js config.yaml

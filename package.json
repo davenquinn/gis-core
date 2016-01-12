@@ -14,6 +14,7 @@
   "author": "Daven Quinn",
   "license": "MIT",
   "devDependencies": {
+    "carto": "^0.15.3",
     "electron-prebuilt": "^0.36.1",
     "node-sass": "^3.4.2"
   },
