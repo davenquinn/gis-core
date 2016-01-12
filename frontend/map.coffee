@@ -3,6 +3,12 @@ configFromFile = require './config'
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
 
+defaultOptions =
+  tileSize: 256
+  zoom: 0
+  continuousWorld: true
+  debounceMoveend: true
+
 class Map extends L.Map
   constructor: (el,options)->
     if options.configFile?
@@ -16,7 +22,7 @@ class Map extends L.Map
         fn = lyr.filename
         lyrs[lyr.name] = new MapnikLayer lyr.filename
       options.mapnikLayers = lyrs
-      delete cfg.layers
+      cfg.layers = []
 
       # Set options (values defined in code
       # take precedence).
@@ -31,10 +37,10 @@ class Map extends L.Map
         bounds: options.bounds
       options.crs = projection
 
-    if not options.tileSize?
-      options.tileSize = 256
+    for k,v of defaultOptions
+      if not options[k]?
+        options[k] = v
 
-    console.log options
     @initialize el, options
     @addMapnikLayers()
 

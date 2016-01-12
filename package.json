@@ -15,7 +15,6 @@
   "license": "MIT",
   "devDependencies": {
     "carto": "^0.15.3",
-    "electron-prebuilt": "^0.36.1",
     "node-sass": "^3.4.2"
   },
   "dependencies": {
@@ -23,7 +22,8 @@
     "js-yaml": "^3.4.6",
     "leaflet": "^1.0.0-beta.2",
     "mapnik-pool": "^0.1.2",
-    "minimist": "^1.2.0",
-    "proj4": "^2.3.12"
+    "minimist": "^1.2.0"
+    "mapnik": "*",
+    "proj4": "*"
   }
 }

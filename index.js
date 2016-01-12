@@ -1,2 +1,2 @@
 require("coffee-script/register");
-requre("frontend/index");
+module.exports = require("./frontend");
