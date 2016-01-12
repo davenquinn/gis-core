@@ -39,6 +39,11 @@ module.exports = (fn)->
     # Make paths relative to config file
     d.filename = specializePath d.filename
 
+  # Convert from lon,lat representation to
+  # leaflet's internal lat,lon
+  if cfg.center?
+    cfg.center = [cfg.center[1],cfg.center[0]]
+
   return cfg
 
 
