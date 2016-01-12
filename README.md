@@ -10,24 +10,23 @@ to be used in a web mapping framework:
 - direct access to databases
 - virtually any raster/vector format (based on GDAL)
 
-These can be styled using `mapnik` and CartoCSS,
-and displayed using
-javascript (which can then be extended with editable layers
-or visualizations in a manner akin to web maps).
+The display engine is `mapnik` and the viewer is a minimally
+modified `leaflet` map. The result is a fast, local map display which can be extended with editable layers
+or visualizations in a manner akin to web maps.
 This approach attempts to bridge the gap between ArcGIS/QGIS
 and web mapping, where more control and customization is
 required.
 
-Maps are configurable using simple file-based configuration
-and standard mapnik styles. The frontend is a minimally modified
-`leaflet` map. Stylesheet reloading (in progress)
-provides a quick way to iterate on map styles. The module
-can be used standalone or as a component of a larger application.
+Maps are configurable using simple file-based configuration,
+standard mapnik styles, and CartoCSS. Stylesheet reloading
+(in progress) provides a quick way to iterate
+on map styles.
 
-This is designed to function within a GUI environment
+The module is designed to function within a GUI environment
 with access to native node modules, such as `electron` or
-`node-webkit`. The module depends on the `mapnik` framework
-(via the `node-mapnik` bindings)
+`node-webkit`. It depends on the `mapnik` framework
+(via the `node-mapnik` bindings). It can be used standalone
+or as a component of a larger application.
 
 ## TODO
 
