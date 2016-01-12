@@ -6,7 +6,7 @@ setupProjection = require "./projection"
 class Map extends L.Map
   constructor: (el,options)->
     if options.configFile?
-      cfg = configFromFile(options.configFile).map
+      cfg = configFromFile options.configFile
       delete options.configFile
 
       # Keep mapnik layer configs separate from

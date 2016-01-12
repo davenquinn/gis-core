@@ -19,8 +19,14 @@ module.exports = (fn)->
   method = registry[ext.slice(1)]
   contents = fs.readFileSync fn,'utf8'
   cfg = method contents
+
+  # Check if we have a map config, or a more general
+  # configuration file with a `map` section
+  if not cfg.layers?
+    cfg = cfg.map
+
   # Function to determine path
-  cfg.path = (fn)->
+  specializePath = (fn)->
     # Relative paths are taken to be
     # with respect to config file
     if path.isAbsolute fn
@@ -29,9 +35,9 @@ module.exports = (fn)->
       p = path.join dir,fn
       return path.normalize p
 
-  cfg.map.layers.forEach (d)->
+  cfg.layers.forEach (d)->
     # Make paths relative to config file
-    d.filename = cfg.path d.filename
+    d.filename = specializePath d.filename
 
   return cfg
 
