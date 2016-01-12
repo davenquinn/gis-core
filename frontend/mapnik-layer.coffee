@@ -1,6 +1,7 @@
 fs = require 'fs'
 mapnik = require 'mapnik'
 mapnikPool = require 'mapnik-pool'
+path = require 'path'
 L = require 'leaflet'
 
 mapnik.register_default_fonts()
@@ -11,6 +12,9 @@ class MapnikLayer extends L.GridLayer
   constructor: (mapfile, options)->
     @options.updateWhenIdle = true
     @initialize options
+
+    ext = path.extname mapfile
+    @id = path.basename mapfile, ext
 
     _ = fs.readFileSync(mapfile, 'utf8')
     @pool = mPool.fromString _, size: @options.tileSize

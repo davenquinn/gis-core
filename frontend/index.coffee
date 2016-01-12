@@ -1,9 +1,2 @@
-remote = require 'remote'
-
-el = document.querySelector '#main'
-window.app = remote.require "app"
-
-Map = require './map'
-
-new Map el, app.config.map
-
+module.exports =
+  Map: require './map'

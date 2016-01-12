@@ -2,50 +2,49 @@ $ = require "jquery"
 L = require "leaflet"
 path = require 'path'
 global.L = L
+configFromFile = require './config'
 
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
 
-class Map
-  class: "viewer"
-  defaults:
-    tileSize: 256
-  constructor: (@el,@config)->
-    for k,v of @defaults
-      @config[k] = v unless @config[k]?
+class Map extends L.Map
+  constructor: (el,options)->
+    window.map = @
+    if options.configFile?
+      cfg = configFromFile(options.configFile).map
+      delete options.configFile
 
-    @layers =
-      baseMaps: {}
-      overlayMaps: {}
+      # Keep mapnik layer configs separate from
+      # other layers (this is probably temporary)
+      options.mapnikLayers = cfg.layers
+      delete cfg.layers
 
-    s = @config.projection
-    projection = setupProjection s,
-      minResolution: @config.resolution.min # m/px
-      maxResolution: @config.resolution.max # m/px
-      bounds: @config.bounds
+      # Set options (values defined in code
+      # take precedence).
+      for k,v of cfg
+        options[k] = v unless options[k]?
 
-    @leaflet = new L.Map @el,
-      center: @config.center
-      zoom: 2
-      crs: projection
-      boxZoom: false
-      continuousWorld: true
-      debounceMoveend: true
+    if options.projection?
+      s = options.projection
+      projection = setupProjection s,
+        minResolution: options.resolution.min # m/px
+        maxResolution: options.resolution.max # m/px
+        bounds: options.bounds
+      options.crs = projection
 
-    layers = @config.layers
+    if not options.tileSize?
+      options.tileSize = 256
+
+    console.log options
+    @initialize el, options
+    @setupBaseLayers()
+
+  setupBaseLayers: ->
+    @baseLayers = {}
+    layers = @options.mapnikLayers
     for cfg in layers
       l = new MapnikLayer cfg.filename
-      @layers.baseMaps[cfg.name] = l
-      l.addTo @leaflet
-
-    layers = new L.Control.Layers @layers.baseMaps, @layers.overlayMaps,
-      position: "topleft"
-
-    scale = L.control.scale
-      maxWidth: 250,
-      imperial: false
-
-    scale.addTo @leaflet
-    layers.addTo @leaflet
+      @baseLayers[cfg.name] = l
+      l.addTo @
 
 module.exports = Map

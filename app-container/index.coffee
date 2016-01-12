@@ -3,7 +3,6 @@ BrowserWindow = require 'browser-window'
 mn = require 'minimist'
 
 args = mn process.argv.slice(2)
-setupConfig = require './config'
 
 
 # Keep a global reference of the window object, if you don't, the window will
@@ -37,8 +36,6 @@ startApp = (url)->
 
 # Right now, the environment variable "NODE_MAP_CONFIG"
 # should point to the config file
-config = setupConfig args._[0]
-app.config = config
-
+app.configFile = args._[0]
 app.on 'ready', -> startApp "file://#{__dirname}/main.html"
 
