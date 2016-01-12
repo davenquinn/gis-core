@@ -1,7 +1,7 @@
 L = require "leaflet"
 configFromFile = require './config'
 MapnikLayer = require './mapnik-layer'
-setupProjection = require "./projection"
+CRS = require "./projection"
 
 class Map extends L.Map
   constructor: (el,options)->
@@ -25,7 +25,7 @@ class Map extends L.Map
 
     if options.projection?
       s = options.projection
-      projection = setupProjection s,
+      projection = new CRS s,
         minResolution: options.resolution.min # m/px
         maxResolution: options.resolution.max # m/px
         bounds: options.bounds
