@@ -18,7 +18,7 @@ class DataLayer extends L.SVG
   projectPoint: (x,y)=>
     @_map.latLngToLayerPoint(new L.LatLng(y,x))
 
-  onAdd: ->
+  onAdd: =>
     super
     @setupProjection()
     @svg = d3.select @_container

@@ -46,18 +46,27 @@ class Map extends L.Map
 
   addMapnikLayers: (name)->
     layers = @options.mapnikLayers
-    for k,l of layers
-      if name?
-        # Add only specified layer
-        continue unless k == name
-      l.addTo @
+    if name?
+      lyr = layers[name]
+    else
+      # Add the first layer (arbitrarily)
+      for k,l of layers
+        l.addTo @
+        break
 
-  addLayerControl: (baseLayers, overlayLayers)->
+  addLayerControl: (baseLayers, overlayLayers)=>
     lyrs = @options.mapnikLayers
     for k,v of baseLayers
       lyrs[k] = v
     ctl = new L.Control.Layers lyrs, overlayLayers,
       position: "topleft"
     ctl.addTo @
+
+  addScalebar: =>
+    scale = new L.Control.Scale
+      maxWidth: 250,
+      imperial: false
+    scale.addTo @
+
 
 module.exports = Map
