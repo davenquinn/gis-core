@@ -33,7 +33,7 @@ setupProjection = (def, options)->
   _bounds = options.bounds
     .map projection.forward
     .map (d)-> L.point d[0], d[1]
-  bounds = L.bounds _bounds
+  bounds = L.bounds _bounds...
 
   Projection =
     bounds: bounds
