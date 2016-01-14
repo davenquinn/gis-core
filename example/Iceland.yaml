@@ -7,7 +7,7 @@ Stylesheet:
   - "land.mss"
 Layer:
   - id: land_contour
-    name: Iceland Contours
+    name: land_contour
     srs: +init=epsg:4326
     Datasource:
       file: build/Iceland.topojson
