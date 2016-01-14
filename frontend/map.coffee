@@ -44,7 +44,7 @@ class Map extends L.Map
     @initialize el, options
     @addMapnikLayers()
 
-  addMapnikLayers: (name)->
+  addMapnikLayers: (name)=>
     layers = @options.mapnikLayers
     if name?
       lyr = layers[name]

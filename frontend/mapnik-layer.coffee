@@ -1,25 +1,33 @@
 fs = require 'fs'
 mapnik = require 'mapnik'
-mapnikPool = require 'mapnik-pool'
 path = require 'path'
 L = require 'leaflet'
 
-mapnik.register_default_fonts()
-mapnik.register_default_input_plugins()
-mPool = mapnikPool(mapnik)
+coordString = (coords)->
+  "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
 
 class MapnikLayer extends L.GridLayer
   constructor: (mapfile, options)->
     @options.updateWhenIdle = true
+    @options.verbose = true
     @initialize options
 
     ext = path.extname mapfile
     @id = path.basename mapfile, ext
 
     _ = fs.readFileSync(mapfile, 'utf8')
-    @pool = mPool.fromString _, size: @options.tileSize
+    @pool = mapnik.pool.fromString _,
+      sync: true
+      size: @options.tileSize
 
-  createTile: (coords)->
+  log: =>
+    if @options.verbose
+      console.log "(#{@constructor.name})", arguments...
+
+  createTile: (coords)=>
+    cs =  coordString(coords)
+    @log "Starting", cs
+
     r = window.devicePixelRatio or 1
     scaledSize = @options.tileSize * r
 
@@ -39,12 +47,13 @@ class MapnikLayer extends L.GridLayer
     box = [ll.x,ll.y,ur.x,ur.y]
 
     pool = @pool
-    pool.acquire (e,map)->
+    pool.acquire (e,map)=>
       if e then throw e
       map.width = map.height = scaledSize
       im = new mapnik.Image(map.width,map.height)
 
       map.extent = box
+      @log "Rendering", cs
       map.render im, {scale: r}, (err,im) =>
         if err then throw err
         i_ = im.encodeSync 'png'
@@ -54,14 +63,13 @@ class MapnikLayer extends L.GridLayer
         tile.src = url
         tile.onload = ->
           URL.revokeObjectURL(url)
-          _ = "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
-          console.log _
+          console.log cs
         pool.release map
 
     return tile
 
   onAdd: (map)->
-    console.log "Adding to ", map
+    @log "Adding to ", map
     if not @options.tileSize?
       @options.tileSize = map.config.tileSize or 256
     super map
