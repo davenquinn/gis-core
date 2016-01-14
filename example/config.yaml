@@ -1,6 +1,5 @@
 layers:
-  - name: Iceland
-    filename: build/Iceland.xml
+  - Iceland.yaml
 # EPSG 3057
 projection: >
   +proj=lcc +lat_1=64.25 +lat_2=65.75 +lat_0=65

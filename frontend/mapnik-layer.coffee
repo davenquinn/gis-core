@@ -1,22 +1,16 @@
-fs = require 'fs'
 mapnik = require 'mapnik'
-path = require 'path'
 L = require 'leaflet'
 
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
 
 class MapnikLayer extends L.GridLayer
-  constructor: (mapfile, options)->
+  constructor: (xml, options)->
     @options.updateWhenIdle = true
     @options.verbose = true
     @initialize options
 
-    ext = path.extname mapfile
-    @id = path.basename mapfile, ext
-
-    _ = fs.readFileSync(mapfile, 'utf8')
-    @pool = mapnik.pool.fromString _,
+    @pool = mapnik.pool.fromString xml,
       sync: true
       size: @options.tileSize
 

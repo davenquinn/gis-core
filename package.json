@@ -15,7 +15,8 @@
   "license": "MIT",
   "devDependencies": {
     "carto": "^0.15.3",
-    "node-sass": "^3.4.2"
+    "node-sass": "^3.4.2",
+    "underscore": "^1.8.3"
   },
   "dependencies": {
     "coffee-script": "^1.10.0",
