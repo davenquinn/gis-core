@@ -1,5 +1,5 @@
 L = require "leaflet"
-configFromFile = require './config'
+parseConfig = require './config'
 MapnikLayer = require './mapnik-layer'
 setupProjection = require "./projection"
 
@@ -11,23 +11,21 @@ defaultOptions =
 
 class Map extends L.Map
   constructor: (el,options)->
-    if options.configFile?
-      cfg = configFromFile options.configFile
-      delete options.configFile
+    cfg = parseConfig options
 
-      # Keep mapnik layer configs separate from
-      # other layers (this is probably temporary)
-      lyrs = {}
-      for lyr in cfg.layers
-        console.log lyr
-        lyrs[lyr.name] = new MapnikLayer lyr.xml
-      options.mapnikLayers = lyrs
-      cfg.layers = []
+    # Keep mapnik layer configs separate from
+    # other layers (this is probably temporary)
+    lyrs = {}
+    for lyr in cfg.layers
+      console.log lyr
+      lyrs[lyr.name] = new MapnikLayer lyr.xml
+    options.mapnikLayers = lyrs
+    cfg.layers = []
 
-      # Set options (values defined in code
-      # take precedence).
-      for k,v of cfg
-        options[k] = v unless options[k]?
+    # Set options (values defined in code
+    # take precedence).
+    for k,v of cfg
+      options[k] ?= v
 
     if options.projection?
       s = options.projection

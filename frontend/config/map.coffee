@@ -11,7 +11,7 @@ parseMML = (obj, fileName)->
 
   obj.Stylesheet = obj.Stylesheet.map (x)->
     if _.isString x
-      fn = path.join dir, x
+      fn = resolve(path.join dir, x)
       x = fs.readFileSync(fn, 'utf8')
       return id: fn, data: x
     else
@@ -38,7 +38,7 @@ module.exports = (layer)->
     fn = layer.filename
     ext = path.extname fn
     layer.id ?= path.basename fn, ext
-    txt = fs.readFileSync fn, 'utf8'
+    txt = fs.readFileSync resolve(fn), 'utf8'
     parser = layerParsers[ext.slice(1)]
     layer.xml = parser txt, fn
 
