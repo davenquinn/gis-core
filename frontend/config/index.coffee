@@ -1,14 +1,8 @@
 fs = require 'fs'
 path = require 'path'
 
-parseYaml = (text)->
-  yaml = require 'js-yaml'
-  yaml.safeLoad text
-
-registry =
-  yaml: parseYaml
-  yml: parseYaml
-  json: JSON.parse
+parsers = require './parsers'
+configureLayer = require './map'
 
 module.exports = (fn)->
   # Returns a configuration object
@@ -16,7 +10,7 @@ module.exports = (fn)->
   ext = path.extname fn
   dir = path.dirname fn
 
-  method = registry[ext.slice(1)]
+  method = parsers[ext.slice(1)]
   contents = fs.readFileSync fn,'utf8'
   cfg = method contents
 
@@ -25,19 +19,7 @@ module.exports = (fn)->
   if not cfg.layers?
     cfg = cfg.map
 
-  # Function to determine path
-  specializePath = (fn)->
-    # Relative paths are taken to be
-    # with respect to config file
-    if path.isAbsolute fn
-      return fn
-    else
-      p = path.join dir,fn
-      return path.normalize p
-
-  cfg.layers.forEach (d)->
-    # Make paths relative to config file
-    d.filename = specializePath d.filename
+  cfg.layers.forEach configureLayer
 
   # Convert from lon,lat representation to
   # leaflet's internal lat,lon
