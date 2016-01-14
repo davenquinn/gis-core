@@ -1,3 +1,4 @@
 #!/bin/bash
 
-$(npm bin)/electron ../main.js config.yaml
+DIR="$(npm root)/.."
+$(npm bin)/electron "$DIR/main.js" "$DIR/example/config.yaml"

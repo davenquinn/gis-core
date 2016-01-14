@@ -8,6 +8,6 @@ projection: >
   +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
 resolution:
   max: 0.2 # m/px
-  min: 256 # m/px
+  min: 1000 # m/px
 bounds: [[-30,60],[-10,70]]
 center: [-18,64]
