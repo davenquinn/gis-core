@@ -1,6 +1,7 @@
 L = require "leaflet"
 parseConfig = require './config'
 MapnikLayer = require './mapnik-layer'
+TestLayer = require './test-layer'
 setupProjection = require "./projection"
 
 defaultOptions =
