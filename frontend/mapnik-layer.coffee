@@ -18,7 +18,7 @@ class MapnikLayer extends L.GridLayer
     if @options.verbose
       console.log "(#{@constructor.name})", arguments...
 
-  createTile: (coords)=>
+  createTile: (coords, cb)=>
     cs =  coordString(coords)
     @log "Starting", cs
 
@@ -59,6 +59,7 @@ class MapnikLayer extends L.GridLayer
           URL.revokeObjectURL(url)
           console.log cs
         pool.release map
+        cb null, tile
 
     return tile
 
