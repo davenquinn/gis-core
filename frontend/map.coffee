@@ -7,6 +7,7 @@ setupProjection = require "./projection"
 defaultOptions =
   tileSize: 256
   zoom: 0
+  attributionControl: false
   continuousWorld: true
   debounceMoveend: true
 
