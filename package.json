@@ -18,12 +18,14 @@
     "node-sass": "^3.4.2",
     "underscore": "^1.8.3"
   },
+  "peerDependencies": {
+    "mapnik": "*"
+  },
   "dependencies": {
     "coffee-script": "^1.10.0",
     "d3": "^3.5.12",
     "js-yaml": "^3.4.6",
     "leaflet": "^1.0.0-beta.2",
-    "mapnik": "*",
     "mapnik-pool": "git+https://github.com/davenquinn/mapnik-pool.git",
     "minimist": "^1.2.0",
     "proj4": "*"
