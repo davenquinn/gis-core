@@ -43,6 +43,12 @@ class MapnikLayer extends L.GridLayer
     pool = @pool
     pool.acquire (e,map)=>
       if e then throw e
+      if not @_zooming and @_map.getZoom() != coords.z
+        console.log "Tile at wrong zoom level"
+        pool.release map
+        cb Error("Tile at wrong zoom level")
+        return
+
       map.width = map.height = scaledSize
       im = new mapnik.Image(map.width,map.height)
 
@@ -67,6 +73,15 @@ class MapnikLayer extends L.GridLayer
     @log "Adding to ", map
     if not @options.tileSize?
       @options.tileSize = map.config.tileSize or 256
+
+    # We want to be able to check if we are currently
+    # zooming
+    @_zooming = false
+    map.on "zoomstart",=>
+      @_zooming = true
+    map.on "zoomend",=>
+      @_zooming = false
+
     super map
 
 module.exports = MapnikLayer
