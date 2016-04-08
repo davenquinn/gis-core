@@ -18,10 +18,8 @@
     "node-sass": "^3.4.2",
     "underscore": "^1.8.3"
   },
-  "peerDependencies": {
-    "mapnik": "*"
-  },
   "dependencies": {
+    "mapnik": "*",
     "coffee-script": "^1.10.0",
     "d3": "^3.5.12",
     "js-yaml": "^3.4.6",
