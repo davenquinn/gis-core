@@ -13,6 +13,7 @@ class MapnikLayer extends L.GridLayer
     @pool = mapnik.pool.fromString xml,
       sync: true
       size: @options.tileSize
+    @log "Created map pool"
 
   log: =>
     if @options.verbose
@@ -41,8 +42,13 @@ class MapnikLayer extends L.GridLayer
     box = [ll.x,ll.y,ur.x,ur.y]
 
     pool = @pool
+    console.log "Acquiring map"
     pool.acquire (e,map)=>
-      if e then throw e
+      if e
+        if map?
+          pool.release map
+        cb e
+        return
       if not @_zooming and @_map.getZoom() != coords.z
         console.log "Tile at wrong zoom level"
         pool.release map
