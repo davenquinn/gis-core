@@ -7,7 +7,7 @@ coordString = (coords)->
 class MapnikLayer extends L.GridLayer
   constructor: (xml, options)->
     @options.updateWhenIdle = true
-    @options.verbose = true
+    @options.verbose ?= false
     @initialize options
 
     @pool = mapnik.pool.fromString xml,
@@ -50,7 +50,7 @@ class MapnikLayer extends L.GridLayer
         cb e
         return
       if not @_zooming and @_map.getZoom() != coords.z
-        console.log "Tile at wrong zoom level"
+        @log "Tile at wrong zoom level"
         pool.release map
         cb Error("Tile at wrong zoom level")
         return
@@ -67,9 +67,9 @@ class MapnikLayer extends L.GridLayer
         url = URL.createObjectURL(blob)
 
         tile.src = url
-        tile.onload = ->
+        tile.onload = =>
           URL.revokeObjectURL(url)
-          console.log cs
+          @log cs
         pool.release map
         cb null, tile
 

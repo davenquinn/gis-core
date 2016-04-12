@@ -12,20 +12,20 @@ defaultOptions =
   debounceMoveend: true
 
 class Map extends L.Map
-  constructor: (el,options)->
-    cfg = parseConfig options
-
+  constructor: (el,opts)->
+    cfg = parseConfig opts
     # Keep mapnik layer configs separate from
     # other layers (this is probably temporary)
     lyrs = {}
     for lyr in cfg.layers
       console.log lyr
       lyrs[lyr.name] = new MapnikLayer lyr.xml
+    options = {}
     options.mapnikLayers = lyrs
-    cfg.layers = []
 
     # Set options (values defined in code
     # take precedence).
+    options.layers = []
     for k,v of cfg
       options[k] ?= v
 
@@ -55,7 +55,9 @@ class Map extends L.Map
         break
 
   addLayerControl: (baseLayers, overlayLayers)=>
+    console.log @options
     lyrs = @options.mapnikLayers
+    console.log lyrs
     for k,v of baseLayers
       lyrs[k] = v
     ctl = new L.Control.Layers lyrs, overlayLayers,
