@@ -40,6 +40,7 @@ class MapnikLayer extends L.GridLayer
       x: bounds.min.x + (coords.x + 1) * sz
       y: bounds.max.y - (coords.y) * sz
     box = [ll.x,ll.y,ur.x,ur.y]
+    console.log box
 
     pool = @pool
     console.log "Acquiring map"
