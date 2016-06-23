@@ -21,6 +21,7 @@ module.exports = (cfg)->
 
   cfg.basedir ?= ''
 
+  # Function to resolve pathnames
   global.resolve = (fn)->
     if path.isAbsolute fn
       return fn

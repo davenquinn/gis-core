@@ -38,9 +38,15 @@ module.exports = (layer)->
     fn = layer.filename
     ext = path.extname fn
     layer.id ?= path.basename fn, ext
-    txt = fs.readFileSync resolve(fn), 'utf8'
+
+    try
+      fp = global.resolve fn
+    catch e
+      fp = path.resolve fn
+
+    txt = fs.readFileSync fp, 'utf8'
     parser = layerParsers[ext.slice(1)]
-    layer.xml = parser txt, fn
+    layer.xml = parser txt, fp
 
   # Set name from ID if not defined
   layer.name ?= layer.id
