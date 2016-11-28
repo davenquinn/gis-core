@@ -19,7 +19,7 @@ class Map extends L.Map
     lyrs = {}
     for lyr in cfg.layers
       console.log lyr
-      lyrs[lyr.name] = new MapnikLayer lyr.xml
+      lyrs[lyr.name] = new MapnikLayer lyr.name, lyr.xml
     options = {}
     options.mapnikLayers = lyrs
 
@@ -42,7 +42,7 @@ class Map extends L.Map
         options[k] = v
 
     @initialize el, options
-    @addMapnikLayers()
+    @addMapnikLayers options.initLayer
 
   addMapnikLayers: (name)=>
     layers = @options.mapnikLayers
@@ -51,13 +51,13 @@ class Map extends L.Map
     else
       # Add the first layer (arbitrarily)
       for k,l of layers
-        l.addTo @
+        lyr = l
         break
+    lyr.addTo @
 
   addLayerControl: (baseLayers, overlayLayers)=>
     console.log @options
     lyrs = @options.mapnikLayers
-    console.log lyrs
     for k,v of baseLayers
       lyrs[k] = v
     ctl = new L.Control.Layers lyrs, overlayLayers,

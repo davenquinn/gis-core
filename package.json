@@ -27,6 +27,7 @@
     "js-yaml": "^3.4.6",
     "leaflet": "^1.0.0-beta.2",
     "mapnik-pool": "git+https://github.com/davenquinn/mapnik-pool.git",
+    "mapnik": "file:../../modules/elevation/deps/node-mapnik",
     "minimist": "^1.2.0",
     "proj4": "*"
   }

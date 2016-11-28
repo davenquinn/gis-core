@@ -5,7 +5,7 @@ coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
 
 class MapnikLayer extends L.GridLayer
-  constructor: (xml, options)->
+  constructor: (@id, xml, options)->
     @options.updateWhenIdle = true
     @options.verbose ?= false
     @initialize options
