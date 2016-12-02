@@ -21,7 +21,6 @@ class MapnikLayer extends L.GridLayer
 
   createTile: (coords, cb)=>
     cs =  coordString(coords)
-    @log "Starting", cs
 
     r = window.devicePixelRatio or 1
     scaledSize = @options.tileSize * r
@@ -40,10 +39,8 @@ class MapnikLayer extends L.GridLayer
       x: bounds.min.x + (coords.x + 1) * sz
       y: bounds.max.y - (coords.y) * sz
     box = [ll.x,ll.y,ur.x,ur.y]
-    console.log box
 
     pool = @pool
-    console.log "Acquiring map"
     pool.acquire (e,map)=>
       if e
         if map?
@@ -60,7 +57,6 @@ class MapnikLayer extends L.GridLayer
       im = new mapnik.Image(map.width,map.height)
 
       map.extent = box
-      @log "Rendering", cs
       map.render im, {scale: r}, (err,im) =>
         if err then throw err
         i_ = im.encodeSync 'png'
@@ -70,7 +66,6 @@ class MapnikLayer extends L.GridLayer
         tile.src = url
         tile.onload = =>
           URL.revokeObjectURL(url)
-          @log cs
         pool.release map
         cb null, tile
 
