@@ -1,5 +1,4 @@
-app = require 'app'
-BrowserWindow = require 'browser-window'
+{app, BrowserWindow} = require 'electron'
 mn = require 'minimist'
 
 args = mn process.argv.slice(2)

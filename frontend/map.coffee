@@ -13,7 +13,10 @@ defaultOptions =
 
 class Map extends L.Map
   constructor: (el,opts)->
-    cfg = parseConfig opts
+    c = null
+    c ?= opts.configFile
+    c = opts unless c?
+    cfg = parseConfig c
     # Keep mapnik layer configs separate from
     # other layers (this is probably temporary)
     lyrs = {}

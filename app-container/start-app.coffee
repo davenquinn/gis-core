@@ -1,12 +1,11 @@
-remote = require 'remote'
+{remote} = require 'electron'
 gis = require '../frontend'
 L = require 'leaflet'
 
 el = document.querySelector '#main'
-window.app = remote.require "app"
 
 map = new gis.Map el,
-  configFile: app.configFile
+  configFile: remote.app.configFile
   zoom: 2
   boxZoom: false
   continuousWorld: true
