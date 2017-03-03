@@ -21,8 +21,7 @@ class Map extends L.Map
     # other layers (this is probably temporary)
     lyrs = {}
     for lyr in cfg.layers
-      console.log lyr
-      lyrs[lyr.name] = new MapnikLayer lyr.name, lyr.xml
+      lyrs[lyr.name] = new MapnikLayer lyr.name, lyr.xml, verbose: true
     options = {}
     options.mapnikLayers = lyrs
 

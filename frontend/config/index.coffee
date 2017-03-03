@@ -6,7 +6,7 @@ parsers = require './parsers'
 configureLayer = require './map'
 
 
-module.exports = (cfg)->
+module.exports = (cfg={})->
   if _.isString cfg
     fn = cfg
     # Returns a configuration object
@@ -19,21 +19,22 @@ module.exports = (cfg)->
     cfg = method contents
     cfg.basedir ?= dir
 
-  cfg.basedir ?= ''
-
+  basedir = cfg.basedir or ""
   # Function to resolve pathnames
-  global.resolve = (fn)->
+  resolve = (fn)->
     if path.isAbsolute fn
       return fn
     else
-      return path.join cfg.basedir,fn
+      return path.join basedir,fn
 
   # Check if we have a map config, or a more general
   # configuration file with a `map` section
   if not cfg.layers?
     cfg = cfg.map
 
-  cfg.layers = cfg.layers.map configureLayer
+  cfg.layers ?= []
+  applyConfig = configureLayer(resolveFilename: resolve)
+  cfg.layers = cfg.layers.map applyConfig
 
   # Convert from lon,lat representation to
   # leaflet's internal lat,lon

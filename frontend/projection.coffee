@@ -14,6 +14,12 @@ setupProjection = (def, options)->
       r /= 2
     options.resolutions = res
 
+  # Find EPSG code in def, if exists
+  operator = ///(epsg|EPSG):(\d+)///
+  match = operator.exec(def)
+  if match?
+    def = "EPSG:#{match[2]}"
+
   p = proj4.Proj(def)
   if p.datum.a?
     # Allows resizing of scalebar (a bit hackish)

@@ -29,26 +29,28 @@ layerParsers =
   yaml: parseYMML
   ymml: parseYMML
 
-module.exports = (layer)->
-  if _.isString layer
-    layer = filename: layer
-  console.log layer
+module.exports = (opts={})->
+  # Return a configured renderer
+  resolver = opts.resolveFilename or path.resolve
 
-  if layer.filename?
-    fn = layer.filename
-    ext = path.extname fn
-    layer.id ?= path.basename fn, ext
+  (layer)->
+    if _.isString layer
+      layer = filename: layer
+    console.log layer
 
-    try
-      fp = global.resolve fn
-    catch e
-      fp = path.resolve fn
+    if layer.filename?
+      fn = layer.filename
+      ext = path.extname fn
+      layer.id ?= path.basename fn, ext
 
-    txt = fs.readFileSync fp, 'utf8'
-    parser = layerParsers[ext.slice(1)]
-    layer.xml = parser txt, fp
+      # Resolve filename
+      fp = resolver(fn)
 
-  # Set name from ID if not defined
-  layer.name ?= layer.id
+      txt = fs.readFileSync fp, 'utf8'
+      parser = layerParsers[ext.slice(1)]
+      layer.xml = parser txt, fp
 
-  layer # {xml, **opts}
+    # Set name from ID if not defined
+    layer.name ?= layer.id
+
+    layer # {xml, **opts}
