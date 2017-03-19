@@ -6,16 +6,18 @@ _ = require 'underscore'
 parsers = require './parsers'
 
 parseMML = (obj, fileName)->
-  console.log obj
   dir = path.dirname fileName
 
-  obj.Stylesheet = obj.Stylesheet.map (x)->
-    if _.isString x
-      fn = path.resolve(path.join dir, x)
-      x = fs.readFileSync(fn, 'utf8')
-      return id: fn, data: x
-    else
-      return x
+  doIfString = (func)->(x)->
+    return x unless _.isString x
+    filename = path.resolve(path.join dir, x)
+    contents = fs.readFileSync(filename, 'utf8')
+    return func(x, content)
+
+  # Something here involving layers
+
+  func = doIfString (id, data)->{ id, data }
+  obj.Stylesheet = obj.Stylesheet.map func
 
   renderer = new carto.Renderer
   return renderer.render(obj)

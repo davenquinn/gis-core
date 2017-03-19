@@ -5,7 +5,6 @@ _ = require 'underscore'
 parsers = require './parsers'
 configureLayer = require './map'
 
-
 module.exports = (cfg)->
   if _.isString cfg
     fn = cfg
