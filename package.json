@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "electron-rebuild --version 1.4.15"
+    "postinstall": "linklocal & electron-rebuild --version 1.4.15"
   },
   "repository": {
     "type": "git",
@@ -20,13 +20,14 @@
     "underscore": "^1.8.3"
   },
   "dependencies": {
-    "coffee-script": "^1.10.0",
-    "d3": "^3.5.12",
+    "bluebird": "^3.5.0",
+    "coffee-script": "^1.12.4",
+    "d3": "^4.7.3",
     "electron-compile": "^6.1.2",
     "generic-pool": "^3.1.6",
     "js-yaml": "^3.4.6",
     "leaflet": "^1.0.0",
-    "mapnik": "^3.5",
+    "mapnik": "file:../node-packages/node-mapnik",
     "mapnik-pool": "git+https://github.com/davenquinn/mapnik-pool.git",
     "minimist": "^1.2.0",
     "proj4": "*"
