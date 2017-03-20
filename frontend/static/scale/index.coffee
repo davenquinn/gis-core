@@ -93,7 +93,7 @@ module.exports = (el,map, opts={})->
 
   h = map.size.height-opts.margin
   g.attr "transform", "translate(0, 0)"
-    .attr 'class', 'scale'
+    .attr 'class', 'map-scale'
 
   bbox = g.node().getBBox()
 
