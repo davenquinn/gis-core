@@ -6,6 +6,7 @@ buildScale = require './scale'
 {fileExists} = require './util'
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
+
 Promise = require 'bluebird'
 # load map config
 loadCfg = require '../config/map'
@@ -37,7 +38,8 @@ class StaticMap
     try
       @_map.fromStringSync mapData.xml
       @canRender = true
-    catch
+    catch err
+      console.error err
       # Construct a bare-bones map without layers
       match = /srs="[^"]+"/.exec mapData.xml
       srs = match[0]
@@ -91,8 +93,6 @@ class StaticMap
     # Render a cacheable map to a filename
     # Only render the map if the file doesn't exist
     if not fileExists(fn)
-      if not @canRender
-        throw ECANNOTRENDER
       im = @_map.renderSync {format: 'png'}
       dir = path.dirname fn
       if not fs.existsSync dir
@@ -108,8 +108,6 @@ class StaticMap
 
     if fileExists(fn)
       @filename = Promise.resolve fn
-    if not @canRender
-      throw ECANNOTRENDER
     @filename = @__render {format: 'png'}
       .tap ->
         dir = path.dirname fn
@@ -120,7 +118,6 @@ class StaticMap
         fn
 
   renderToObjectUrl: ->
-    throw ECANNOTRENDER unless @canRender
     @filename = @__render {format: 'png'}
       .then (im)->
         new Promise (res,rej)->
@@ -149,7 +146,9 @@ class StaticMap
         .append 'use'
         .attr 'xlink:href',"##{cp}"
 
-      el.append 'image'
+      @image = el.append 'g'
+
+      @image.append 'image'
         .attr 'xlink:href', filename
         .attrs @size
 
