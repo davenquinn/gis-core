@@ -121,17 +121,27 @@ class StaticMap
     @filename = @__render {format: 'png'}
       .then (im)->
         new Promise (res,rej)->
+          console.log "Encoded"
           im.encode 'png', {}, (e,c)->res(c)
       .then (im)->
         blob = new Blob [im], {type: 'image/png'}
         URL.createObjectURL(blob)
 
+  waitForImages: =>
+    new Promise (res)=>
+      @image.on 'load', res
+
   create: (el, opts={})=>
+    ###
+    # Returns a promise of an element
+    ###
+    # Should wrap this to take a d3 selection or node
+    console.log el
     el.attrs @size
 
     if not @filename?
       @renderToObjectUrl()
-
+    console.log @filename
     @filename.then (filename)=>
       console.log filename
       defs = el.append 'defs'
@@ -146,9 +156,7 @@ class StaticMap
         .append 'use'
         .attr 'xlink:href',"##{cp}"
 
-      @image = el.append 'g'
-
-      @image.append 'image'
+      @image = el.append 'image'
         .attr 'xlink:href', filename
         .attrs @size
 
@@ -158,10 +166,12 @@ class StaticMap
           'clip-path': "url(#mapClip)"
 
       if not opts.scale?
-        return
+        return @
+      opts.scale.width ?= @size.width/3
       el.append 'g'
         .attr 'class', 'scale'
         .attr 'transform',"translate(10 #{@size.height-10})"
         .call @scaleComponent(opts.scale)
+      return @
 
 module.exports = StaticMap

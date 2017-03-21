@@ -11,7 +11,7 @@ module.exports = (el,map, opts={})->
   scale = map.scale
   opts.margin ?= 10
   opts.height ?= 5
-  opts.ndivs ?= 5
+  opts.ndivs ?= 4
   opts.unitMargin ?= 20
   opts.backgroundMargin ?= 20
   pts = [0,opts.width]
@@ -100,7 +100,7 @@ module.exports = (el,map, opts={})->
   bkg
     .attrs
       x: -20
-      y: -15
+      y: -19
       width: bbox.width+20
       height: bbox.height+20
 
