@@ -47,12 +47,12 @@ class StaticMap
       @_map.fromStringSync ms
     bbox ?= [200,200,-200,-200]
     @setBounds bbox
-    console.log @_map
     @__render = (opts)=>
       new Promise (res, rej)=>
         im = new mapnik.Image @size.width*2, @size.height*2
         @_map.render im, opts, (e,m)->
           rej(e) if e?
+          console.log "Done rendering map"
           res(m)
 
   setBounds: (bbox)->
@@ -136,12 +136,12 @@ class StaticMap
     # Returns a promise of an element
     ###
     # Should wrap this to take a d3 selection or node
-    console.log el
+    console.log "Beginning to render map"
     el.attrs @size
 
     if not @filename?
       @renderToObjectUrl()
-    console.log @filename
+
     @filename.then (filename)=>
       console.log filename
       defs = el.append 'defs'
