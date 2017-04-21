@@ -5,36 +5,42 @@ _ = require 'underscore'
 
 parsers = require './parsers'
 
-parseMML = (obj, fileName)->
-  dir = path.dirname fileName
+parseMML = (data, fileName, cfg={})->
+  if cfg.layers?
+    s = fs.readFileSync cfg.layers, 'utf8'
+    Layers = parsers.yaml(s)
 
-  doIfString = (func)->(x)->
-    return x unless _.isString x
-    filename = path.resolve(path.join dir, x)
-    contents = fs.readFileSync(filename, 'utf8')
-    return func(x, content)
+  if Layers?
+    data.Layer = data.Layer.map (id)->
+      if typeof(id) is 'object'
+        return id
+      obj = Layers[id] or {}
+      obj.name = id
+      obj.id = id
+      return obj
 
-  # Something here involving layers
-
-  func = doIfString (id, data)->{ id, data }
-  obj.Stylesheet = obj.Stylesheet.map func
+  data.Stylesheet = data.Stylesheet.map (x)->
+      if typeof x isnt 'string'
+          return id: x, data: x.data
+      fn = path.join path.dirname(fileName), x
+      d = fs.readFileSync(fn, 'utf8')
+      return id: x, data: d
 
   renderer = new carto.Renderer
-  return renderer.render(obj)
+  return renderer.render(data)
 
-parseYMML = (txt, fn)->
-  parseMML parsers.yaml(txt), fn
+parseYMML = (txt, fn, cfg)->
+  parseMML parsers.yaml(txt), fn, cfg
 
 layerParsers =
   xml: (d)->d
-  mml: (d,fn)->parseMML JSON.parse(d), fn
+  mml: (d,fn, cfg)->parseMML JSON.parse(d), fn, cfg
   yaml: parseYMML
   ymml: parseYMML
 
-module.exports = (layer)->
+module.exports = (layer, cfg)->
   if _.isString layer
     layer = filename: layer
-  console.log layer
 
   if layer.filename?
     fn = layer.filename
@@ -48,7 +54,7 @@ module.exports = (layer)->
 
     txt = fs.readFileSync fp, 'utf8'
     parser = layerParsers[ext.slice(1)]
-    layer.xml = parser txt, fp
+    layer.xml = parser txt, fp, cfg
 
   # Set name from ID if not defined
   layer.name ?= layer.id

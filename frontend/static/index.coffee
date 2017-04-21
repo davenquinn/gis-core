@@ -2,7 +2,6 @@ mapnik = require 'mapnik'
 path = require 'path'
 fs = require 'fs'
 d3 = require 'd3'
-buildScale = require './scale'
 {fileExists} = require './util'
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
@@ -21,7 +20,8 @@ boundsFromEnvelope = (bbox)->
     return [c[0][0],c[0][1],c[2][0],c[2][1]]
   return bbox
 
-MPATH = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/_compiled"
+MPATH = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/defs"
+LAYERS = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/mapnik-layers.yaml"
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
 class StaticMap
@@ -30,8 +30,8 @@ class StaticMap
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
     name ?= "ortho"
-    cfg = path.join(MPATH,"#{name}.xml")
-    mapData = loadCfg cfg
+    cfg = path.join(MPATH,"#{name}.yaml")
+    mapData = loadCfg cfg, layers: LAYERS
 
     @_map = new mapnik.Map @size.width*2, @size.height*2
     @canRender = false
@@ -86,6 +86,7 @@ class StaticMap
 
   scaleComponent: (opts)=>
     # A component for a d3 svg scale
+    buildScale = require './scale'
     _map = @
     return (el)->buildScale(el,_map,opts)
 
@@ -138,12 +139,12 @@ class StaticMap
     # Should wrap this to take a d3 selection or node
     console.log "Beginning to render map"
     el.attrs @size
+    @el = el
 
     if not @filename?
       @renderToObjectUrl()
 
-    @filename.then (filename)=>
-      console.log filename
+    p = @filename.then (filename)=>
       defs = el.append 'defs'
 
       cp = "map-bounds"
@@ -167,11 +168,14 @@ class StaticMap
 
       if not opts.scale?
         return @
+
       opts.scale.width ?= @size.width/3
       el.append 'g'
         .attr 'class', 'scale'
         .attr 'transform',"translate(10 #{@size.height-10})"
         .call @scaleComponent(opts.scale)
       return @
+
+    p.then @waitForImages
 
 module.exports = StaticMap

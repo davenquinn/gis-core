@@ -1,26 +1,27 @@
 scale_gray=#888888
 
-:global
-  rect.scale-background
-    stroke: scale_gray
-    stroke-width: 4
+g.scale
+  fill: white
 
-  .scale-overlay
-    rect
-      fill: white
-      stroke: none
-    rect.even
-      fill: scale_gray
+rect.scale-background
+  stroke: scale_gray
+  stroke-width: 4
 
-  .tick-labels
-    text-anchor: middle
-
-  .unit-label
-    text-anchor: start
-
-  text
-    font-family: "Chaparral Pro"
+.scale-overlay
+  rect
     fill: white
-
-  .scale text
+    stroke: none
+  rect.even
     fill: scale_gray
+
+.tick-labels
+  text-anchor: middle
+
+.unit-label
+  text-anchor: start
+
+text
+  font-family: "Chaparral Pro"
+
+.scale text
+  fill: scale_gray
