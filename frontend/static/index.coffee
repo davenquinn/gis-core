@@ -166,11 +166,16 @@ class StaticMap
           class: 'data-area'
           'clip-path': "url(#mapClip)"
 
+      @overlay = el.append 'g'
+        .attrs
+          class: 'overlay'
+          'clip-path': "url(#mapClip)"
+
       if not opts.scale?
         return @
 
       opts.scale.width ?= @size.width/3
-      el.append 'g'
+      @overlay.append 'g'
         .attr 'class', 'scale'
         .attr 'transform',"translate(10 #{@size.height-10})"
         .call @scaleComponent(opts.scale)

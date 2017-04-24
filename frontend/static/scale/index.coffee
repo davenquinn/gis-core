@@ -12,7 +12,6 @@ module.exports = (el,map, opts={})->
   opts.margin ?= 10
   opts.height ?= 5
   opts.ndivs ?= 4
-  opts.unitMargin ?= 20
   opts.backgroundMargin ?= 20
   pts = [0,opts.width]
 
@@ -68,27 +67,35 @@ module.exports = (el,map, opts={})->
 
   labels = g.append 'g'
     .attrs class: 'tick-labels'
-    .selectAll 'text'
+    .selectAll 'text.label'
     .data ticks
 
   margin = 5
 
   labels.enter()
     .append 'text'
-    .text (d,i)->
-      if i == ticks.length-1
-        return "    #{d} #{label}"
-      d
+    .text (d,i)->d
     .attrs
+      class: 'label'
       x: x
       y: -margin
 
-  #g.append 'text'
-    #.text label
-    #.attrs
-      #class: 'unit-label'
-      #x: width+opts.unitMargin
-      #y: -margin
+  # Guess unit margin
+  sel = d3.select "g.tick-labels text.label:last-child"
+  v = sel.data()[0]
+  nchars = "#{v}".length
+  w = sel.node().getBBox().width
+  charWidth = w/nchars
+  offs = (nchars/2+1)*charWidth
+  console.log offs
+  opts.unitMargin ?= offs
+
+  g.append 'text'
+    .text label
+    .attrs
+      class: 'unit-label'
+      x: width+opts.unitMargin
+      y: -margin
 
 
   h = map.size.height-opts.margin
