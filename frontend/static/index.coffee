@@ -69,7 +69,7 @@ class StaticMap
     v = @_proj.forward(d)
     @transform(v)
 
-  transform: (d)->
+  transform: (d)=>
     [(d[0]-@extent[0])*@scale,(@extent[3]-d[1])*@scale]
 
   __setupGeoPath: ->
@@ -83,6 +83,19 @@ class StaticMap
   geoPath: (d)=>
     @_geoPath ?= @__setupGeoPath()
     @_geoPath(d)
+
+  __pathGenerator: =>
+    # Must be in lat/lon to use geo path
+    _proj = @transform
+    trans = d3.geoTransform point: (x,y)->
+      v = _proj [x,y]
+      @stream.point v[0],v[1]
+    d3.geoPath().projection trans
+
+  path: (d)=>
+    # A path in projected coordinates
+    @_path ?= @__pathGenerator()
+    @_path(d)
 
   scaleComponent: (opts)=>
     # A component for a d3 svg scale
