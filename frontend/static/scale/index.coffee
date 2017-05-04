@@ -11,7 +11,6 @@ module.exports = (el,map, opts={})->
   scale = map.scale
   opts.margin ?= 10
   opts.height ?= 5
-  opts.ndivs ?= 4
   opts.backgroundMargin ?= 20
   pts = [0,opts.width]
 
@@ -22,6 +21,7 @@ module.exports = (el,map, opts={})->
   width = geoSize*scale
 
   ndivs = width/rounder
+  opts.ndivs ?= 5 - ndivs
 
   label = 'm'
   # Switch to km if large
@@ -35,13 +35,17 @@ module.exports = (el,map, opts={})->
     .range [0,width]
     .nice()
 
+  bkg = el.append 'rect'
+    .attrs class: 'background'
+
+  # Guess number of ticks from size
+
+
   ticks = x.ticks(opts.ndivs)
   width = x(ticks[ticks.length-1])
 
   tickPairs = d3.pairs ticks
 
-  bkg = el.append 'rect'
-    .attrs class: 'background'
 
   g = el.append 'g'
 

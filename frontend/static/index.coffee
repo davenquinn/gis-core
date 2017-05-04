@@ -6,6 +6,7 @@ d3 = require 'd3'
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
 mapnik.register_system_fonts()
+{bboxPolygon} = require 'turf'
 
 Promise = require 'bluebird'
 # load map config
@@ -66,6 +67,9 @@ class StaticMap
     @scale = @size.width/(@extent[2]-@extent[0])
     @_proj = new mapnik.Projection @_map.srs
 
+  boundingPolygon: ->
+    bboxPolygon(@extent)
+
   projection: (d)=>
     v = @_proj.forward(d)
     @transform(v)
@@ -77,18 +81,21 @@ class StaticMap
     opts.geographic ?= true
     pathGenerator = if opts.geographic \
                 then @geoPath else @path
-    container = @map.dataArea
-    (data)->
+    container = @dataArea
+
+    fn = {}
+    fn.data = (data)->
       # Returns selection
-      # el_ = container.append 'g'
-      sel = el_.selectAll 'path'
+      el_ = container.append 'g'
+        .attrs class: classname
+      sel = el_.selectAll "path.#{classname}"
         .data data
 
       sel.enter()
         .append 'path'
         .attrs
           d: pathGenerator
-          class: classname
+    return fn
 
   transform: (d)=>
     [(d[0]-@extent[0])*@scale,(@extent[3]-d[1])*@scale]
