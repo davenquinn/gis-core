@@ -5,6 +5,7 @@ d3 = require 'd3'
 {fileExists} = require './util'
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
+mapnik.register_system_fonts()
 
 Promise = require 'bluebird'
 # load map config
@@ -68,6 +69,26 @@ class StaticMap
   projection: (d)=>
     v = @_proj.forward(d)
     @transform(v)
+
+  createFeatures: (classname, opts)=>
+    # Basic method to create a selection of features
+    # that can be styled using css.
+    opts ?= {}
+    opts.geographic ?= true
+    pathGenerator = if opts.geographic \
+                then @geoPath else @path
+    container = @map.dataArea
+    (data)->
+      # Returns selection
+      # el_ = container.append 'g'
+      sel = el_.selectAll 'path'
+        .data data
+
+      sel.enter()
+        .append 'path'
+        .attrs
+          d: pathGenerator
+          class: classname
 
   transform: (d)=>
     [(d[0]-@extent[0])*@scale,(@extent[3]-d[1])*@scale]
@@ -186,6 +207,9 @@ class StaticMap
 
       if not opts.scale?
         return @
+
+      if typeof opts.scale is "boolean"
+        opts.scale = {}
 
       opts.scale.width ?= @size.width/3
       @overlay.append 'g'

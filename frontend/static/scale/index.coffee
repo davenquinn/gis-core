@@ -25,7 +25,7 @@ module.exports = (el,map, opts={})->
 
   label = 'm'
   # Switch to km if large
-  if geoSize > 2000
+  if geoSize > 1500
     geoSize /= 1000
     label = 'km'
 
