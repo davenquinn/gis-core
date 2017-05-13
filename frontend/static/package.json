@@ -1,0 +1,8 @@
+{
+  "name": "map",
+  "version": "1.0.0",
+  "description": "A small component to wrap mapnik and generate static maps",
+  "main": "index.coffee",
+  "author": "Daven Quinn",
+  "license": "ISC"
+}

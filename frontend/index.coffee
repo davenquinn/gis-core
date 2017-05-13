@@ -8,3 +8,5 @@ module.exports =
   Map: require './map'
   MapnikLayer: require './mapnik-layer'
   Leaflet: require 'leaflet'
+  StaticMap: require './static'
+  mapnik: mapnik

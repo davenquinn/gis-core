@@ -5,33 +5,42 @@ _ = require 'underscore'
 
 parsers = require './parsers'
 
-parseMML = (obj, fileName)->
-  console.log obj
-  dir = path.dirname fileName
+parseMML = (data, fileName, cfg={})->
+  if cfg.layers?
+    s = fs.readFileSync cfg.layers, 'utf8'
+    Layers = parsers.yaml(s)
 
-  obj.Stylesheet = obj.Stylesheet.map (x)->
-    if _.isString x
-      fn = path.resolve(path.join dir, x)
-      x = fs.readFileSync(fn, 'utf8')
-      return id: fn, data: x
-    else
-      return x
+  if Layers?
+    data.Layer = data.Layer.map (id)->
+      if typeof(id) is 'object'
+        return id
+      obj = Layers[id] or {}
+      obj.name = id
+      obj.id = id
+      return obj
+
+  data.Stylesheet = data.Stylesheet.map (x)->
+      if typeof x isnt 'string'
+          return id: x, data: x.data
+      fn = path.join path.dirname(fileName), x
+      d = fs.readFileSync(fn, 'utf8')
+      return id: x, data: d
 
   renderer = new carto.Renderer
-  return renderer.render(obj)
+  return renderer.render(data)
 
-parseYMML = (txt, fn)->
-  parseMML parsers.yaml(txt), fn
+parseYMML = (txt, fn, cfg)->
+  parseMML parsers.yaml(txt), fn, cfg
 
 layerParsers =
   xml: (d)->d
-  mml: (d,fn)->parseMML JSON.parse(d), fn
+  mml: (d,fn, cfg)->parseMML JSON.parse(d), fn, cfg
   yaml: parseYMML
   ymml: parseYMML
 
-module.exports = (opts={})->
-  # Return a configured renderer
-  resolver = opts.resolveFilename or path.resolve
+module.exports = (layer, cfg)->
+  if _.isString layer
+    layer = filename: layer
 
   (layer)->
     if _.isString layer
@@ -43,12 +52,9 @@ module.exports = (opts={})->
       ext = path.extname fn
       layer.id ?= path.basename fn, ext
 
-      # Resolve filename
-      fp = resolver(fn)
-
-      txt = fs.readFileSync fp, 'utf8'
+      txt = fs.readFileSync fn, 'utf8'
       parser = layerParsers[ext.slice(1)]
-      layer.xml = parser txt, fp
+      layer.xml = parser txt, fn
 
     # Set name from ID if not defined
     layer.name ?= layer.id
