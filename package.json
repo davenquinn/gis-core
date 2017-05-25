@@ -27,7 +27,7 @@
     "generic-pool": "^3.1.6",
     "js-yaml": "^3.4.6",
     "leaflet": "^1.0.0",
-    "mapnik": "file:../node-packages/node-mapnik",
+    "mapnik": "file:../node-mapnik",
     "mapnik-pool": "git+https://github.com/davenquinn/mapnik-pool.git",
     "minimist": "^1.2.0",
     "proj4": "*"
