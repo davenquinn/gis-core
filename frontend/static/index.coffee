@@ -27,19 +27,21 @@ LAYERS = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/mapnik-la
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
 class StaticMap
-  constructor: (@size, bbox, name)->
+  constructor: (@size, bbox, name, extraCfg={})->
     ###
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
     name ?= "ortho"
+    extraCfg.layers ?= LAYERS
     cfg = path.join(MPATH,"#{name}.yaml")
-    mapData = loadCfg cfg, layers: LAYERS
+    mapData = loadCfg cfg, extraCfg
 
     @_map = new mapnik.Map @size.width*2, @size.height*2
     @canRender = false
     try
       @_map.fromStringSync mapData.xml
       @canRender = true
+      console.log mapData.xml
     catch err
       console.error err
       # Construct a bare-bones map without layers
@@ -53,6 +55,7 @@ class StaticMap
       new Promise (res, rej)=>
         im = new mapnik.Image @size.width*2, @size.height*2
         @_map.render im, opts, (e,m)->
+          console.log opts
           rej(e) if e?
           console.log "Done rendering map"
           res(m)
@@ -143,14 +146,17 @@ class StaticMap
     @filename = fn
     return fn
 
-  renderAsync: (fn)->
+  renderAsync: (fn, variables={})->
     # Render a cacheable map to a filename
     # Only render the map if the file doesn't exist
     {writeFile} = Promise.promisify fs
 
+    variables.lowerBound = 0
+    variables.upperBound = 300
+
     if fileExists(fn)
       @filename = Promise.resolve fn
-    @filename = @__render {format: 'png'}
+    @filename = @__render {format: 'png', variables: variables}
       .tap ->
         dir = path.dirname fn
         if not fs.existsSync dir
@@ -159,8 +165,8 @@ class StaticMap
         writeFile fn,im
         fn
 
-  renderToObjectUrl: ->
-    @filename = @__render {format: 'png'}
+  renderToObjectUrl: (variables)->
+    @filename = @__render {format: 'png', variables}
       .then (im)->
         new Promise (res,rej)->
           console.log "Encoded"
@@ -182,8 +188,9 @@ class StaticMap
     el.attrs @size
     @el = el
 
+    opts.variables ?= {}
     if not @filename?
-      @renderToObjectUrl()
+      @renderToObjectUrl(opts.variables)
 
     p = @filename.then (filename)=>
       defs = el.append 'defs'

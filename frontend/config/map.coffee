@@ -6,7 +6,7 @@ _ = require 'underscore'
 parsers = require './parsers'
 
 parseMML = (data, fileName, cfg={})->
-  if cfg.layers?
+  if cfg.layers? # A layers file
     s = fs.readFileSync cfg.layers, 'utf8'
     Layers = parsers.yaml(s)
 
@@ -19,13 +19,18 @@ parseMML = (data, fileName, cfg={})->
       obj.id = id
       return obj
 
-  data.Stylesheet = data.Stylesheet.map (x)->
-      if typeof x isnt 'string'
-          return id: x, data: x.data
-      fn = path.join path.dirname(fileName), x
-      d = fs.readFileSync(fn, 'utf8')
-      return id: x, data: d
+  if cfg.styles?
+    data.Stylesheet = data.Stylesheet.concat(cfg.styles)
+  console.log data.Stylesheet
 
+  rfn = (acc, x)->
+    if typeof x isnt 'string'
+        return acc + x.data
+    fn = path.join path.dirname(fileName), x
+    return acc + fs.readFileSync(fn, 'utf8')
+
+  val =  data.Stylesheet.reduce rfn, ""
+  data.Stylesheet = [{id: 'style', data: val}]
   renderer = new carto.Renderer
   return renderer.render(data)
 
