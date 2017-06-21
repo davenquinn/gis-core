@@ -41,7 +41,6 @@ class StaticMap
     try
       @_map.fromStringSync mapData.xml
       @canRender = true
-      console.log mapData.xml
     catch err
       console.error err
       # Construct a bare-bones map without layers
