@@ -13,6 +13,7 @@ defaultOptions =
 
 class Map extends L.Map
   constructor: (el,opts)->
+    super()
     c = null
     c ?= opts.configFile
     c = opts unless c?

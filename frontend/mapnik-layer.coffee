@@ -6,6 +6,7 @@ coordString = (coords)->
 
 class MapnikLayer extends L.GridLayer
   constructor: (@id, xml, options)->
+    super()
     @options.updateWhenIdle = true
     @options.verbose ?= false
     @initialize options

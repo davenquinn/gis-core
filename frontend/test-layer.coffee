@@ -5,6 +5,7 @@ coordString = (coords)->
 
 class TestLayer extends L.GridLayer
   constructor: (options)->
+    super()
     @options.updateWhenIdle = true
     @options.verbose = true
     @initialize options
