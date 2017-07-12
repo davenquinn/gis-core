@@ -22,8 +22,6 @@ boundsFromEnvelope = (bbox)->
     return [c[0][0],c[0][1],c[2][0],c[2][1]]
   return bbox
 
-MPATH = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/defs"
-LAYERS = "#{process.env.PROJECT_DIR}/versioned/application/config/maps/mapnik-layers.yaml"
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
 class StaticMap
@@ -31,8 +29,9 @@ class StaticMap
     ###
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
+    MPATH = process.env.MAPNIK_STYLES
     name ?= "ortho"
-    extraCfg.layers ?= LAYERS
+    extraCfg.layers ?= process.env.MAPNIK_LAYERS
     cfg = path.join(MPATH,"#{name}.yaml")
     mapData = loadCfg cfg, extraCfg
 
@@ -75,6 +74,11 @@ class StaticMap
   projection: (d)=>
     v = @_proj.forward(d)
     @transform(v)
+
+  geoDimensions: =>
+    # Get the width and height in map unit
+    e = @extent
+    { width: e[2]-e[0], height: e[3]-e[1] }
 
   createFeatures: (classname, opts)=>
     # Basic method to create a selection of features
