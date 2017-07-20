@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "linklocal & electron-rebuild --version 1.4.15"
+    "postinstall": "linklocal"
   },
   "repository": {
     "type": "git",
