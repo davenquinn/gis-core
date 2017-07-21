@@ -43,6 +43,7 @@ class MapnikLayer extends L.GridLayer
 
     pool = @pool
     pool.acquire (e,map)=>
+      console.log "Acquired map from pool"
       if e
         if map?
           pool.release map
@@ -67,6 +68,7 @@ class MapnikLayer extends L.GridLayer
         tile.src = url
         tile.onload = =>
           URL.revokeObjectURL(url)
+        console.log "Releasing map back to pool"
         pool.release map
         cb null, tile
 

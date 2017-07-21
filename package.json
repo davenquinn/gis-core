@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
-    "coffeescript": "https://github.com/GeoffreyBooth/coffeescript.git#2.0.0-beta3",
+    "coffeescript": "2.0.0-beta3",
     "d3": "^4.7.3",
     "electron-compile": "^6.1.2",
     "generic-pool": "^3.1.6",
