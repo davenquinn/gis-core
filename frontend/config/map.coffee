@@ -43,7 +43,7 @@ layerParsers =
   yaml: parseYMML
   ymml: parseYMML
 
-module.exports = (layer, cfg)->
+loadCfg = (layer, cfg)->
   if _.isString layer
     layer = filename: layer
 
@@ -65,3 +65,5 @@ module.exports = (layer, cfg)->
   layer.name ?= layer.id
 
   layer # {xml, **opts}
+
+module.exports = loadCfg

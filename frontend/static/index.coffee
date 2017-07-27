@@ -7,6 +7,8 @@ mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
 mapnik.register_system_fonts()
 {bboxPolygon} = require 'turf'
+_ = require 'underscore'
+{Renderer} = require 'carto'
 
 Promise = require 'bluebird'
 # load map config
@@ -32,8 +34,18 @@ class StaticMap
     MPATH = process.env.MAPNIK_STYLES
     name ?= "ortho"
     extraCfg.layers ?= process.env.MAPNIK_LAYERS
-    cfg = path.join(MPATH,"#{name}.yaml")
-    mapData = loadCfg cfg, extraCfg
+
+    ## Paths to extra CartoCSS stylesheets
+    extraCfg.styles ?= []
+    if _.isString name
+      cfg = path.join(MPATH,"#{name}.yaml")
+      mapData = loadCfg cfg, extraCfg
+    else
+      # We have provided a full mml object
+      console.log name
+      renderer = new Renderer
+      mapData = {name: 'map-style', xml: renderer.render(name)}
+    console.log mapData
 
     @_map = new mapnik.Map @size.width*2, @size.height*2
     @canRender = false
