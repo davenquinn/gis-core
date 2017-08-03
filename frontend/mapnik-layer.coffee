@@ -2,7 +2,7 @@ mapnik = require 'mapnik'
 mapnikPool = require 'mapnik-pool'
 L = require 'leaflet'
 
-mapnik.pool = mapnikPool mapnik
+pooledMapnik = mapnikPool mapnik
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
 
@@ -16,7 +16,7 @@ class MapnikLayer extends L.GridLayer
     @options.verbose ?= false
     @initialize options
 
-    @pool = mapnik.pool.fromString xml, size: @options.tileSize
+    @pool = pooledMapnik.fromString xml, size: @options.tileSize
     @log "Created map pool"
 
   log: ->
