@@ -1,5 +1,10 @@
 mapnik = require 'mapnik'
+mapnikPool = require 'mapnik-pool'
 L = require 'leaflet'
+
+mapnik.pool = mapnikPool mapnik
+mapnik.register_default_fonts()
+mapnik.register_default_input_plugins()
 
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
@@ -11,16 +16,14 @@ class MapnikLayer extends L.GridLayer
     @options.verbose ?= false
     @initialize options
 
-    @pool = mapnik.pool.fromString xml,
-      sync: true
-      size: @options.tileSize
+    @pool = mapnik.pool.fromString xml, size: @options.tileSize
     @log "Created map pool"
 
-  log: =>
+  log: ->
     if @options.verbose
       console.log "(#{@constructor.name})", arguments...
 
-  createTile: (coords, cb)=>
+  createTile: (coords, cb)->
     cs =  coordString(coords)
 
     r = window.devicePixelRatio or 1
