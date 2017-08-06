@@ -32,7 +32,7 @@ module.exports = (cfg)->
   if not cfg.layers?
     cfg = cfg.map
 
-  cfg.layers = cfg.layers.map configureLayer
+  cfg.layers = cfg.layers.map (d,i)->configureLayer(d)
 
   # Convert from lon,lat representation to
   # leaflet's internal lat,lon

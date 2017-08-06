@@ -6,6 +6,7 @@ _ = require 'underscore'
 parsers = require './parsers'
 
 parseMML = (data, fileName, cfg={})->
+  cfg.layers ?= process.env.MAPNIK_LAYERS
   if cfg.layers? # A layers file
     s = fs.readFileSync cfg.layers, 'utf8'
     Layers = parsers.yaml(s)
@@ -47,19 +48,18 @@ loadCfg = (layer, cfg)->
   if _.isString layer
     layer = filename: layer
 
-  if layer.filename?
-    fn = layer.filename
-    ext = path.extname fn
-    layer.id ?= path.basename fn, ext
+  fn = layer.filename
+  ext = path.extname fn
+  layer.id ?= path.basename fn, ext
 
-    try
-      fp = global.resolve fn
-    catch e
-      fp = path.resolve fn
+  try
+    fp = global.resolve fn
+  catch e
+    fp = path.resolve fn
 
-    txt = fs.readFileSync fp, 'utf8'
-    parser = layerParsers[ext.slice(1)]
-    layer.xml = parser txt, fp, cfg
+  txt = fs.readFileSync fp, 'utf8'
+  parser = layerParsers[ext.slice(1)]
+  layer.xml = parser txt, fp, cfg
 
   # Set name from ID if not defined
   layer.name ?= layer.id

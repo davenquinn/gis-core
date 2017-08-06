@@ -5,6 +5,7 @@ L = require 'leaflet'
 pooledMapnik = mapnikPool mapnik
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
+mapnik.register_system_fonts()
 
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
@@ -25,6 +26,7 @@ class MapnikLayer extends L.GridLayer
 
   createTile: (coords, cb)->
     cs =  coordString(coords)
+    console.log cs
 
     r = window.devicePixelRatio or 1
     scaledSize = @options.tileSize * r
@@ -45,6 +47,7 @@ class MapnikLayer extends L.GridLayer
     box = [ll.x,ll.y,ur.x,ur.y]
 
     pool = @pool
+
     pool.acquire (e,map)=>
       console.log "Acquired map from pool"
       if e
@@ -62,7 +65,14 @@ class MapnikLayer extends L.GridLayer
       im = new mapnik.Image(map.width,map.height)
 
       map.extent = box
-      map.render im, {scale: r}, (err,im) =>
+
+      mapScale = map.scale()
+      scaleDenominator = map.scaleDenominator()
+      console.log mapScale
+
+      variables = {mapScale, scaleDenominator}
+
+      map.render im, {scale: r, variables}, (err,im) =>
         if err then throw err
         i_ = im.encodeSync 'png'
         blob = new Blob [i_], {type: 'image/png'}
