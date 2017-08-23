@@ -27,24 +27,24 @@ boundsFromEnvelope = (bbox)->
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
 class StaticMap
-  constructor: (@size, bbox, name, extraCfg={})->
+  constructor: (@size, bbox, mapStyle, extraCfg={})->
     ###
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
     MPATH = process.env.MAPNIK_STYLES
-    name ?= "ortho"
+    mapStyle ?= "ortho"
     extraCfg.layers ?= process.env.MAPNIK_LAYERS
 
     ## Paths to extra CartoCSS stylesheets
     extraCfg.styles ?= []
-    if _.isString name
-      cfg = path.join(MPATH,"#{name}.yaml")
+    if _.isString mapStyle
+      cfg = path.join(MPATH,"#{mapStyle}.yaml")
       mapData = loadCfg cfg, extraCfg
     else
       # We have provided a full mml object
-      console.log name
+      console.log mapStyle
       renderer = new Renderer
-      mapData = {name: 'map-style', xml: renderer.render(name)}
+      mapData = {name: 'map-style', xml: renderer.render(mapStyle)}
     console.log mapData
 
     @_map = new mapnik.Map @size.width*2, @size.height*2
