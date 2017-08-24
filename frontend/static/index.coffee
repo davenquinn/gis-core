@@ -42,7 +42,6 @@ class StaticMap
       mapData = loadCfg cfg, extraCfg
     else
       # We have provided a full mml object
-      console.log mapStyle
       renderer = new Renderer
       mapData = {name: 'map-style', xml: renderer.render(mapStyle)}
     console.log mapData
