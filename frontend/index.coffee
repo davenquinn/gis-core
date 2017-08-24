@@ -11,5 +11,6 @@ module.exports = {
   Leaflet: require 'leaflet'
   StaticMap: require './static'
   MapStyle: require './map-style'
+  RasterColorizer: require './raster-colorizer'
   mapnik
 }
