@@ -23,8 +23,13 @@ class MapStyle
     opts.styles ?= []
 
     @Layer = opts.layers.map (id)=>
-      lyr = @constructor.layerDirectory[id] or {}
-      lyr.name = id
+      if _.isString id
+        lyr = @constructor.layerDirectory[id] or {}
+        lyr.name = id
+      else
+        lyr = id
+      lyr.srs ?= @srs
+      console.log lyr
       return lyr
 
     ### Add computed styles to stylesheet ###
