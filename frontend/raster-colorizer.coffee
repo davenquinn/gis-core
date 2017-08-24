@@ -1,6 +1,6 @@
 index = {
   defaultColor: "raster-colorizer-default-color"
-  defaultMode: "raster-colorizer-default-mode"
+  mode: "raster-colorizer-default-mode"
   epsilon: "raster-colorizer-epsilon"
   scaling: 'raster-scaling'
   opacity: 'raster-opacity'
@@ -8,11 +8,19 @@ index = {
   stops: 'raster-colorizer-stops'
 }
 
+defaults = {
+  mode: 'linear'
+  scaling: 'bilinear'
+  opacity: 1
+}
+
 RasterColorizer = (name, scale, opts={})->
   opts.extend ?= 0
-  opts.ndivs ?= 10
 
-  tickValues = scale.ticks opts.ndivs
+  if opts.ndivs?
+    tickValues = scale.ticks opts.ndivs
+  else
+    tickValues = scale.domain()
 
   if opts.extend > 0
     tickValues.unshift tickValues[0]-opts.extend
@@ -25,6 +33,10 @@ RasterColorizer = (name, scale, opts={})->
   opts.stops = "\n"+stops.join('\n')
 
   interior = ""
+
+  for k,v of defaults
+    opts[k] ?= v
+
   for k,value of opts
     key = index[k]
     continue unless key

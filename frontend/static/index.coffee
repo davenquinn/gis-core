@@ -240,6 +240,7 @@ class StaticMap
         opts.scale = {}
 
       opts.scale.width ?= @size.width/3
+      opts.scale.standalone = false
       @overlay.append 'g'
         .attr 'class', 'scale'
         .attr 'transform',"translate(10 #{@size.height-10})"

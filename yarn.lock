@@ -238,6 +238,10 @@ d3-color@1, d3-color@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-1.0.3.tgz#bc7643fca8e53a8347e2fbdaffa236796b58509b"
 
+d3-convention@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/d3-convention/-/d3-convention-2.0.0.tgz#ae7ff3d1687d2e8407a298a3ad42f351f437dd99"
+
 d3-dispatch@1, d3-dispatch@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-dispatch/-/d3-dispatch-1.0.3.tgz#46e1491eaa9b58c358fce5be4e8bed626e7871f8"
