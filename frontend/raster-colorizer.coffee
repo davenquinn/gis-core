@@ -45,7 +45,8 @@ RasterColorizer = (name, scale, opts={})->
 
   data = "#{name} {\n#{interior}}\n"
   id = name.replace("#","")
-  {id, data}
-
+  obj = {id, data}
+  obj.scale = scale
+  return obj
 
 module.exports = RasterColorizer
