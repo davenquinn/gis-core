@@ -1,4 +1,7 @@
-L = require "leaflet"
+try
+  L = require "leaflet"
+catch e
+  console.log "Couldn't load leaflet"
 parseConfig = require './config'
 MapnikLayer = require './mapnik-layer'
 TestLayer = require './test-layer'

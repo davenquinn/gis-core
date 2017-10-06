@@ -31,6 +31,7 @@ class StaticMap
     ###
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
+    @imageScale = extraCfg.scale or 2
     MPATH = process.env.MAPNIK_STYLES
     mapStyle ?= "ortho"
     extraCfg.layers ?= process.env.MAPNIK_LAYERS
@@ -42,12 +43,11 @@ class StaticMap
       mapData = loadCfg cfg, extraCfg
     else
       # We have provided a full mml object
-      console.log mapStyle
       renderer = new Renderer
       mapData = {name: 'map-style', xml: renderer.render(mapStyle)}
     console.log mapData
 
-    @_map = new mapnik.Map @size.width*2, @size.height*2
+    @_map = new mapnik.Map @size.width*@imageScale, @size.height*@imageScale
     @canRender = false
     try
       @_map.fromStringSync mapData.xml
@@ -63,7 +63,7 @@ class StaticMap
     @setBounds bbox
     @__render = (opts)=>
       new Promise (res, rej)=>
-        im = new mapnik.Image @size.width*2, @size.height*2
+        im = new mapnik.Image @size.width*@imageScale, @size.height*@imageScale
         @_map.render im, opts, (e,m)->
           console.log opts
           rej(e) if e?
@@ -113,6 +113,8 @@ class StaticMap
         .append 'path'
         .attrs
           d: pathGenerator
+          class: classname
+
     return fn
 
   transform: (d)=>
@@ -153,7 +155,7 @@ class StaticMap
     # Render a cacheable map to a filename
     # Only render the map if the file doesn't exist
     if not fileExists(fn)
-      im = @_map.renderSync {format: 'png'}
+      im = @_map.renderSync {format: 'png', scale: @imageScale}
       dir = path.dirname fn
       if not fs.existsSync dir
         fs.mkdirSync dir
@@ -241,6 +243,7 @@ class StaticMap
         opts.scale = {}
 
       opts.scale.width ?= @size.width/3
+      opts.scale.standalone = false
       @overlay.append 'g'
         .attr 'class', 'scale'
         .attr 'transform',"translate(10 #{@size.height-10})"
