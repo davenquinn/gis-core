@@ -24,6 +24,7 @@
     "coffeescript": "next",
     "d3": "^4.7.3",
     "d3-convention": "^2.0.0",
+    "d3-selection-multi": "^1.0.1",
     "electron-compile": "^6.1.2",
     "js-yaml": "^3.4.6",
     "leaflet": "^1.2.0",

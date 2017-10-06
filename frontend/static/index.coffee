@@ -2,6 +2,7 @@ mapnik = require 'mapnik'
 path = require 'path'
 fs = require 'fs'
 d3 = require 'd3'
+require 'd3-selection-multi'
 {fileExists} = require './util'
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
@@ -199,9 +200,16 @@ class StaticMap
   create: (el, opts={})=>
     ###
     # Returns a promise of an element
+    #
+    # Can be passed a d3 selection or a html node
     ###
-    # Should wrap this to take a d3 selection or node
     console.log "Beginning to render map"
+    try
+      el = el.node()
+    catch
+
+    el = d3.select el
+
     el.attrs @size
     @el = el
 
