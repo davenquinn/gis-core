@@ -204,12 +204,11 @@ class StaticMap
     # Can be passed a d3 selection or a html node
     ###
     console.log "Beginning to render map"
-    try
-      el = el.node()
-    catch
-
-    el = d3.select el
-
+    if not el.node?
+      el = d3.select el
+    if not el.attrs?
+      ## d3-selection-multi is required be enabled
+      el = d3.select el.node()
     el.attrs @size
     @el = el
 
