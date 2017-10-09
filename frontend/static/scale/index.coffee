@@ -13,6 +13,11 @@ module.exports = (el,map, opts={})->
   opts.height ?= 5
   opts.backgroundMargin ?= 20
   opts.standalone ?= true
+  opts.backgroundColor ?= 'white'
+
+  # Filled background
+  opts.filledBackground ?= not opts.standalone
+
   pts = [0,opts.width]
 
   initGuess = opts.width/scale
@@ -36,8 +41,9 @@ module.exports = (el,map, opts={})->
     .range [0,width]
     .nice()
 
-  bkg = el.append 'rect'
-    .attrs class: 'background'
+  if opts.filledBackground
+    bkg = el.append 'rect'
+      .attrs class: 'background'
 
   # Guess number of ticks from size
 
@@ -108,12 +114,13 @@ module.exports = (el,map, opts={})->
 
   bbox = g.node().getBBox()
 
-  bkg
-    .attrs
-      x: -20
-      y: -19
-      width: bbox.width+20
-      height: bbox.height+20
+  if bkg?
+    bkg
+      .attrs
+        x: -20
+        y: -19
+        width: bbox.width+20
+        height: bbox.height+20
 
   if not opts.standalone
     h = map.size.height-opts.margin
