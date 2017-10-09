@@ -122,8 +122,11 @@ module.exports = (el,map, opts={})->
         width: bbox.width+20
         height: bbox.height+20
 
-  if not opts.standalone
+  if opts.standalone
+    # TODO: This should be calculated based on scale parameters
+    # but is currently imposed.
+    el.attrs 'transform': 'translate(10,15)'
+  else
     h = map.size.height-opts.margin
     el.attrs 'transform': "translate(#{opts.margin}, #{h})"
-
 
