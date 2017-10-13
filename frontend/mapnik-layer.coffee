@@ -1,26 +1,32 @@
 mapnik = require 'mapnik'
+mapnikPool = require 'mapnik-pool'
 L = require 'leaflet'
+
+pooledMapnik = mapnikPool mapnik
+mapnik.register_default_fonts()
+mapnik.register_default_input_plugins()
+mapnik.register_system_fonts()
 
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
 
 class MapnikLayer extends L.GridLayer
   constructor: (@id, xml, options)->
+    super()
     @options.updateWhenIdle = true
     @options.verbose ?= false
     @initialize options
 
-    @pool = mapnik.pool.fromString xml,
-      sync: true
-      size: @options.tileSize
+    @pool = pooledMapnik.fromString xml, size: @options.tileSize
     @log "Created map pool"
 
-  log: =>
+  log: ->
     if @options.verbose
       console.log "(#{@constructor.name})", arguments...
 
-  createTile: (coords, cb)=>
+  createTile: (coords, cb)->
     cs =  coordString(coords)
+    console.log cs
 
     r = window.devicePixelRatio or 1
     scaledSize = @options.tileSize * r
@@ -41,7 +47,9 @@ class MapnikLayer extends L.GridLayer
     box = [ll.x,ll.y,ur.x,ur.y]
 
     pool = @pool
+
     pool.acquire (e,map)=>
+      console.log "Acquired map from pool"
       if e
         if map?
           pool.release map
@@ -57,7 +65,14 @@ class MapnikLayer extends L.GridLayer
       im = new mapnik.Image(map.width,map.height)
 
       map.extent = box
-      map.render im, {scale: r}, (err,im) =>
+
+      mapScale = map.scale()
+      scaleDenominator = map.scaleDenominator()
+      console.log mapScale
+
+      variables = {mapScale, scaleDenominator}
+
+      map.render im, {scale: r, variables}, (err,im) =>
         if err then throw err
         i_ = im.encodeSync 'png'
         blob = new Blob [i_], {type: 'image/png'}
@@ -66,6 +81,7 @@ class MapnikLayer extends L.GridLayer
         tile.src = url
         tile.onload = =>
           URL.revokeObjectURL(url)
+        console.log "Releasing map back to pool"
         pool.release map
         cb null, tile
 

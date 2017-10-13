@@ -6,7 +6,8 @@ _ = require 'underscore'
 parsers = require './parsers'
 
 parseMML = (data, fileName, cfg={})->
-  if cfg.layers?
+  cfg.layers ?= process.env.MAPNIK_LAYERS
+  if cfg.layers? # A layers file
     s = fs.readFileSync cfg.layers, 'utf8'
     Layers = parsers.yaml(s)
 
@@ -19,13 +20,18 @@ parseMML = (data, fileName, cfg={})->
       obj.id = id
       return obj
 
-  data.Stylesheet = data.Stylesheet.map (x)->
-      if typeof x isnt 'string'
-          return id: x, data: x.data
-      fn = path.join path.dirname(fileName), x
-      d = fs.readFileSync(fn, 'utf8')
-      return id: x, data: d
+  if cfg.styles?
+    data.Stylesheet = data.Stylesheet.concat(cfg.styles)
+  console.log data.Stylesheet
 
+  rfn = (acc, x)->
+    if typeof x isnt 'string'
+        return acc + x.data
+    fn = path.join path.dirname(fileName), x
+    return acc + fs.readFileSync(fn, 'utf8')
+
+  val =  data.Stylesheet.reduce rfn, ""
+  data.Stylesheet = [{id: 'style', data: val}]
   renderer = new carto.Renderer
   return renderer.render(data)
 
@@ -38,25 +44,26 @@ layerParsers =
   yaml: parseYMML
   ymml: parseYMML
 
-module.exports = (layer, cfg)->
+loadCfg = (layer, cfg)->
   if _.isString layer
     layer = filename: layer
 
-  (layer)->
-    if _.isString layer
-      layer = filename: layer
-    console.log layer
+  fn = layer.filename
+  ext = path.extname fn
+  layer.id ?= path.basename fn, ext
 
-    if layer.filename?
-      fn = layer.filename
-      ext = path.extname fn
-      layer.id ?= path.basename fn, ext
+  try
+    fp = global.resolve fn
+  catch e
+    fp = path.resolve fn
 
-      txt = fs.readFileSync fn, 'utf8'
-      parser = layerParsers[ext.slice(1)]
-      layer.xml = parser txt, fn
+  txt = fs.readFileSync fp, 'utf8'
+  parser = layerParsers[ext.slice(1)]
+  layer.xml = parser txt, fp, cfg
 
     # Set name from ID if not defined
     layer.name ?= layer.id
 
-    layer # {xml, **opts}
+  layer # {xml, **opts}
+
+module.exports = loadCfg

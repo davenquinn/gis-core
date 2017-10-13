@@ -12,6 +12,12 @@ module.exports = (el,map, opts={})->
   opts.margin ?= 10
   opts.height ?= 5
   opts.backgroundMargin ?= 20
+  opts.standalone ?= true
+  opts.backgroundColor ?= 'white'
+
+  # Filled background
+  opts.filledBackground ?= not opts.standalone
+
   pts = [0,opts.width]
 
   initGuess = opts.width/scale
@@ -35,19 +41,19 @@ module.exports = (el,map, opts={})->
     .range [0,width]
     .nice()
 
-  bkg = el.append 'rect'
-    .attrs class: 'background'
+  if opts.filledBackground
+    bkg = el.append 'rect'
+      .attrs class: 'background'
 
   # Guess number of ticks from size
-
 
   ticks = x.ticks(opts.ndivs)
   width = x(ticks[ticks.length-1])
 
   tickPairs = d3.pairs ticks
 
-
   g = el.append 'g'
+    .attr 'class', 'map-scale'
 
   g.append 'rect'
     .attrs
@@ -102,19 +108,25 @@ module.exports = (el,map, opts={})->
       y: -margin
 
 
-  h = map.size.height-opts.margin
+
   g.attr "transform", "translate(0, 0)"
     .attr 'class', 'map-scale'
 
   bbox = g.node().getBBox()
 
-  bkg
-    .attrs
-      x: -20
-      y: -19
-      width: bbox.width+20
-      height: bbox.height+20
+  if bkg?
+    bkg
+      .attrs
+        x: -20
+        y: -19
+        width: bbox.width+20
+        height: bbox.height+20
 
-  el.attrs 'transform': "translate(#{opts.margin}, #{h})"
-
+  if opts.standalone
+    # TODO: This should be calculated based on scale parameters
+    # but is currently imposed.
+    el.attrs 'transform': 'translate(10,15)'
+  else
+    h = map.size.height-opts.margin
+    el.attrs 'transform': "translate(#{opts.margin}, #{h})"
 

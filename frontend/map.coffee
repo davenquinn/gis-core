@@ -1,4 +1,7 @@
-L = require "leaflet"
+try
+  L = require "leaflet"
+catch e
+  console.log "Couldn't load leaflet"
 parseConfig = require './config'
 MapnikLayer = require './mapnik-layer'
 TestLayer = require './test-layer'
@@ -43,18 +46,22 @@ class Map extends L.Map
       if not options[k]?
         options[k] = v
 
-    @initialize el, options
-    @addMapnikLayers options.initLayer
+    super el, options
+    @addMapnikLayers options.initLayer or null
 
   addMapnikLayers: (name)=>
     layers = @options.mapnikLayers
     if name?
       lyr = layers[name]
-    else
+
+    if not lyr?
       # Add the first layer (arbitrarily)
       for k,l of layers
         lyr = l
         break
+
+    console.log @options
+    console.log lyr
     lyr.addTo @
 
   addLayerControl: (baseLayers, overlayLayers)=>
