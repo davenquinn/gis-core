@@ -245,6 +245,8 @@ class StaticMap
 
       if not opts.scale?
         return @
+      if not opts.scale
+        return @
 
       if typeof opts.scale is "boolean"
         opts.scale = {}
