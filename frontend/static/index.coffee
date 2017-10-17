@@ -209,7 +209,8 @@ class StaticMap
     if not el.attrs?
       ## d3-selection-multi is required be enabled
       el = d3.select el.node()
-    el.attrs @size
+    {width, height} = @size
+    el.attrs {width,height}
     @el = el
 
     opts.variables ?= {}
@@ -244,6 +245,8 @@ class StaticMap
           'clip-path': "url(#mapClip)"
 
       if not opts.scale?
+        return @
+      if not opts.scale
         return @
 
       if typeof opts.scale is "boolean"
