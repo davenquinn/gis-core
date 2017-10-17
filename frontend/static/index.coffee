@@ -209,7 +209,8 @@ class StaticMap
     if not el.attrs?
       ## d3-selection-multi is required be enabled
       el = d3.select el.node()
-    el.attrs @size
+    {width, height} = @size
+    el.attrs {width,height}
     @el = el
 
     opts.variables ?= {}
