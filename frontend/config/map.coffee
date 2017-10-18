@@ -61,8 +61,8 @@ loadCfg = (layer, cfg)->
   parser = layerParsers[ext.slice(1)]
   layer.xml = parser txt, fp, cfg
 
-    # Set name from ID if not defined
-    layer.name ?= layer.id
+  # Set name from ID if not defined
+  layer.name ?= layer.id
 
   layer # {xml, **opts}
 

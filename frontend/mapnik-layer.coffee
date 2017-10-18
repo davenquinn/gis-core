@@ -1,6 +1,6 @@
 mapnik = require 'mapnik'
 mapnikPool = require 'mapnik-pool'
-L = require 'leaflet'
+{GridLayer} = require 'leaflet'
 
 pooledMapnik = mapnikPool mapnik
 mapnik.register_default_fonts()
@@ -10,7 +10,7 @@ mapnik.register_system_fonts()
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"
 
-class MapnikLayer extends L.GridLayer
+class MapnikLayer extends GridLayer
   constructor: (@id, xml, options)->
     super()
     @options.updateWhenIdle = true
