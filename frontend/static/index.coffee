@@ -152,10 +152,11 @@ class StaticMap
     _map = @
     return (el)->buildScale(el,_map,opts)
 
-  render: (fn)->
+  render: (fn, opts={})->
     # Render a cacheable map to a filename
     # Only render the map if the file doesn't exist
-    if not fileExists(fn)
+    overwrite = opts.overwrite or true
+    if not fileExists(fn) or overwrite
       im = @_map.renderSync {format: 'png', scale: @imageScale}
       dir = path.dirname fn
       if not fs.existsSync dir

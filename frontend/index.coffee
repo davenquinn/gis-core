@@ -5,11 +5,14 @@ pooledMapnik = mapnikPool mapnik
 mapnik.register_default_fonts()
 mapnik.register_default_input_plugins()
 
-{MapStyle, PostGISLayer} = require './map-style'
+try
+  Map = require './map'
+  MapnikLayer = require './mapnik-layer'
+catch
+  Map = null
+  MapnikLayer = null
 
 module.exports = {
-  Map: require './map'
-  MapnikLayer: require './mapnik-layer'
+  Map, MapnikLayer
   StaticMap: require './static'
-  mapnik
 }
