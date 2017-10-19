@@ -270,6 +270,7 @@ class StaticMap
   createTiled: (el)->
     el = guardSelection el
     {width, height} = @size
+    console.log @size
     el.styles {width,height, position:'relative', overflow: 'hidden'}
     tileSize = 1024
     ## Internal spherical mercator projection
@@ -316,20 +317,22 @@ class StaticMap
       [minY..maxY].map (y,j)->
         bbox = merc.bbox(x,y, args...)
         px = transform [bbox[0],bbox[3]]
+        pxA = transform [bbox[2],bbox[1]]
+        sa = pxA[0]-px[0]
 
         renderer.serve null, {z,y,x}, (err,buffer)->
           blob = new Blob [buffer], {type: 'image/png'}
           uri = URL.createObjectURL(blob)
-          console.log px
-          xpos = px[0]/2-32*i
-          ypos = px[1]/2-32*j
+          console.log px, pxA
+          xpos = px[0]#-128*i
+          ypos = px[1]#-128*j
           im = el.append 'img'
             .attr 'src', uri
             .styles
               position: 'absolute'
               transform: "translate(#{xpos}px,#{ypos}px)"
-              width: tileSize/4
-              height: tileSize/4
+              width: sa
+              height: sa
               top: 0
               left: 0
 
