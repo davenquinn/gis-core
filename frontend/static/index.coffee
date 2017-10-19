@@ -312,8 +312,8 @@ class StaticMap
     renderer = await p
 
     transform = @transform
-    [minX..maxX].map (x)->
-      [minY..maxY].map (y)->
+    [minX..maxX].map (x,i)->
+      [minY..maxY].map (y,j)->
         bbox = merc.bbox(x,y, args...)
         px = transform [bbox[0],bbox[3]]
 
@@ -321,11 +321,13 @@ class StaticMap
           blob = new Blob [buffer], {type: 'image/png'}
           uri = URL.createObjectURL(blob)
           console.log px
+          xpos = px[0]/2-32*i
+          ypos = px[1]/2-32*j
           im = el.append 'img'
             .attr 'src', uri
             .styles
               position: 'absolute'
-              transform: "translate(#{px[0]/2}px,#{px[1]/2}px)"
+              transform: "translate(#{xpos}px,#{ypos}px)"
               width: tileSize/4
               height: tileSize/4
               top: 0
