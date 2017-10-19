@@ -16,6 +16,7 @@ defaultOptions =
 
 class Map extends L.Map
   constructor: (el,opts)->
+    console.log opts
     c = null
     c ?= opts.configFile
     c = opts unless c?

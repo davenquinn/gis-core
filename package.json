@@ -25,6 +25,7 @@
     "mapnik-pool": "^0.1.3",
     "minimist": "^1.2.0",
     "proj4": "*",
+    "sphericalmercator": "^1.0.5",
     "turf": "^3.0.14",
     "underscore": "^1.8.3"
   },

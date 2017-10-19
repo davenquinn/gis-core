@@ -27,6 +27,14 @@ boundsFromEnvelope = (bbox)->
 
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
+guardSelection = (el)->
+  if not el.node?
+    el = d3.select el
+  if not el.attrs?
+    ## d3-selection-multi is required be enabled
+    el = d3.select el.node()
+  return el
+
 class StaticMap
   constructor: (@size, bbox, mapStyle, extraCfg={})->
     ###
@@ -175,7 +183,7 @@ class StaticMap
 
     if fileExists(fn)
       @filename = Promise.resolve fn
-    @filename = @__render {format: 'png', variables: variables}
+    @filename = @__render {format: 'png', variables}
       .tap ->
         dir = path.dirname fn
         if not fs.existsSync dir
@@ -184,7 +192,7 @@ class StaticMap
         writeFile fn,im
         fn
 
-  renderToObjectUrl: (variables)->
+  renderToObjectUrl: (variables={})->
     @filename = @__render {format: 'png', variables}
       .then (im)->
         new Promise (res,rej)->
@@ -205,11 +213,7 @@ class StaticMap
     # Can be passed a d3 selection or a html node
     ###
     console.log "Beginning to render map"
-    if not el.node?
-      el = d3.select el
-    if not el.attrs?
-      ## d3-selection-multi is required be enabled
-      el = d3.select el.node()
+    el = guardSelection el
     {width, height} = @size
     el.attrs {width,height}
     @el = el
@@ -262,5 +266,65 @@ class StaticMap
       return @
 
     p.then @waitForImages
+
+  createTiled: (el)->
+    el = guardSelection el
+    {width, height} = @size
+    el.styles {width,height, position:'relative'}
+    tileSize = 1024
+    ## Internal spherical mercator projection
+    SphericalMercator = require 'sphericalmercator'
+    merc = new SphericalMercator({
+        size: tileSize
+    })
+    z = 15
+    args = [z, false, '900913']
+    {minX,maxX,minY,maxY} = merc.xyz(@extent, args...)
+    topLeftBBox = merc.bbox(minX, minY, args...)
+
+    offs = (i)=> topLeftBBox[i]-@extent[i]
+
+    # Offset in map coordinate view
+    offset = [
+      topLeftBBox[0]-@extent[0]
+      @extent[3]-topLeftBBox[3]
+    ]
+    cfg = {
+      xml: @_map.toXML()
+      pathname: 'style.xml'
+      tileSize
+      scale: 2
+    }
+    p = await new Promise (resolve, reject)->
+      M = require 'tilestrata-mapnik'
+      renderer = M cfg
+      renderer.init null, (e,backend)->
+        reject(e) if e?
+        resolve(renderer)
+
+    renderer = await p
+
+    transform = @transform
+    [minX..maxX].map (x)->
+      [minY..maxY].map (y)->
+        bbox = merc.bbox(x,y, args...)
+        px = transform [bbox[0],bbox[3]]
+
+        renderer.serve null, {z,y,x}, (err,buffer)->
+          blob = new Blob [buffer], {type: 'image/png'}
+          uri = URL.createObjectURL(blob)
+
+          pxv = (i)->
+            px[i]/4-20
+
+          im = el.append 'img'
+            .attr 'src', uri
+            .styles
+              position: 'absolute'
+              transform: "translate(#{px[0]/4}px,#{px[1]/4}px)"
+              top: 0
+              left: 0
+
+          console.log im.node()
 
 module.exports = StaticMap
