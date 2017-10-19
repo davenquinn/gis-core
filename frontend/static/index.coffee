@@ -270,19 +270,26 @@ class StaticMap
   createTiled: (el)->
     el = guardSelection el
     {width, height} = @size
-    el.styles {width,height, position:'relative'}
+    el.styles {width,height, position:'relative', overflow: 'hidden'}
     tileSize = 1024
     ## Internal spherical mercator projection
     SphericalMercator = require 'sphericalmercator'
     merc = new SphericalMercator({
         size: tileSize
     })
-    z = 15
-    args = [z, false, '900913']
-    {minX,maxX,minY,maxY} = merc.xyz(@extent, args...)
-    topLeftBBox = merc.bbox(minX, minY, args...)
+    pxWidth = width
+    nTiles = pxWidth/tileSize
 
-    offs = (i)=> topLeftBBox[i]-@extent[i]
+    tspan = 0
+    z = 0
+    while tspan < nTiles
+      z += 1
+      args = [z, false, '900913']
+      {minX,maxX,minY,maxY} = merc.xyz(@extent, args...)
+      topLeftBBox = merc.bbox(minX, minY, args...)
+      tspan = maxX-minX
+      console.log tspan,z
+    console.log "Zoom level #{z}"
 
     # Offset in map coordinate view
     offset = [
@@ -293,7 +300,7 @@ class StaticMap
       xml: @_map.toXML()
       pathname: 'style.xml'
       tileSize
-      scale: 2
+      scale: 8
     }
     p = await new Promise (resolve, reject)->
       M = require 'tilestrata-mapnik'
@@ -313,15 +320,14 @@ class StaticMap
         renderer.serve null, {z,y,x}, (err,buffer)->
           blob = new Blob [buffer], {type: 'image/png'}
           uri = URL.createObjectURL(blob)
-
-          pxv = (i)->
-            px[i]/4-20
-
+          console.log px
           im = el.append 'img'
             .attr 'src', uri
             .styles
               position: 'absolute'
-              transform: "translate(#{px[0]/4}px,#{px[1]/4}px)"
+              transform: "translate(#{px[0]/2}px,#{px[1]/2}px)"
+              width: tileSize/4
+              height: tileSize/4
               top: 0
               left: 0
 
