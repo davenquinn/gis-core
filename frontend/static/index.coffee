@@ -278,7 +278,8 @@ class StaticMap
     merc = new SphericalMercator({
         size: tileSize
     })
-    pxWidth = width
+    scale = 2
+    pxWidth = width*scale
     nTiles = pxWidth/tileSize
 
     tspan = 0
@@ -301,7 +302,8 @@ class StaticMap
       xml: @_map.toXML()
       pathname: 'style.xml'
       tileSize
-      scale: 8
+      metatile: 4
+      scale: 4*scale
     }
     p = await new Promise (resolve, reject)->
       M = require 'tilestrata-mapnik'
