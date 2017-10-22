@@ -36,24 +36,24 @@ guardSelection = (el)->
   return el
 
 class StaticMap
-  constructor: (@size, bbox, mapStyle, extraCfg={})->
+  constructor: (@size, bbox, @style, extraCfg={})->
     ###
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
     @imageScale = extraCfg.scale or 2
     MPATH = process.env.MAPNIK_STYLES
-    mapStyle ?= "ortho"
+    @style ?= "ortho"
     extraCfg.layers ?= process.env.MAPNIK_LAYERS
 
     ## Paths to extra CartoCSS stylesheets
     extraCfg.styles ?= []
-    if _.isString mapStyle
-      cfg = path.join(MPATH,"#{mapStyle}.yaml")
+    if _.isString @style
+      cfg = path.join(MPATH,"#{@style}.yaml")
       mapData = loadCfg cfg, extraCfg
     else
       # We have provided a full mml object
       renderer = new Renderer
-      mapData = {name: 'map-style', xml: renderer.render(mapStyle)}
+      mapData = {name: 'map-style', xml: renderer.render(@style)}
     console.log mapData
 
     @_map = new mapnik.Map @size.width*@imageScale, @size.height*@imageScale
@@ -300,7 +300,7 @@ class StaticMap
     ]
     cfg = {
       xml: @_map.toXML()
-      pathname: 'style.xml'
+      pathname: @style.path or "style.xml"
       tileSize
       metatile: 4
       scale: 4*scale
@@ -337,6 +337,8 @@ class StaticMap
               height: sa
               top: 0
               left: 0
+            .on 'load', ->
+              URL.revokeObjectURL(uri)
 
           console.log im.node()
 
