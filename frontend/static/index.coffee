@@ -54,7 +54,6 @@ class StaticMap
       # We have provided a full mml object
       renderer = new Renderer
       mapData = {name: 'map-style', xml: renderer.render(@style)}
-    console.log mapData
 
     @_map = new mapnik.Map @size.width*@imageScale, @size.height*@imageScale
     @canRender = false
@@ -87,6 +86,9 @@ class StaticMap
     @extent = @_map.extent
     # Scale is equal for both x and y obviously
     @scale = @size.width/(@extent[2]-@extent[0])
+    # Version of scale that matches mapnik. The old one
+    # is deprecated and will soon be removed
+    @mapScale = 1/(@scale*@imageScale)
     @_proj = new mapnik.Projection @_map.srs
 
   boundingPolygon: ->
