@@ -21,6 +21,8 @@ class MapStyle
     @srs ?= opts.srs
     opts.layers ?= []
     opts.styles ?= []
+    @layers = opts.layers
+    @styles = opts.styles
 
     @Layer = opts.layers.map (id)=>
       if _.isString id

@@ -82,7 +82,7 @@ class StaticMap
     @_proj = new mapnik.Projection @_map.srs
 
   boundingPolygon: ->
-    bboxPolygon(@extent)
+    bboxPolygon(@_map.extent)
 
   projection: (d)=>
     v = @_proj.forward(d)

@@ -4,7 +4,7 @@ index = {
   epsilon: "raster-colorizer-epsilon"
   scaling: 'raster-scaling'
   opacity: 'raster-opacity'
-  compOp: 'comp-op'
+  compOp: 'raster-comp-op'
   stops: 'raster-colorizer-stops'
 }
 
@@ -14,24 +14,14 @@ defaults = {
   opacity: 1
 }
 
-RasterColorizer = (name, scale, opts={})->
-  opts.extend ?= 0
-
-  if opts.ndivs?
-    tickValues = scale.ticks opts.ndivs
-  else
-    tickValues = scale.domain()
-
-  if opts.extend > 0
-    tickValues.unshift tickValues[0]-opts.extend
-    tickValues.push tickValues[tickValues.length-1]+opts.extend
-
-  console.log tickValues
-  # Create Stops
-  stops = tickValues.map (val)->
-    "    stop(#{val}, #{scale(val)})"
+ImageStretch = (name, stops=[0,255], opts={}, scale)->
+  scale ?= ["black","white"]
+  stops = stops.map (val,i)->
+    v = if scale instanceof Array then scale[i] else scale(val)
+    "    stop(#{val}, #{v})"
   opts.stops = "\n"+stops.join('\n')
 
+  # Begin building CartoCSS
   interior = ""
 
   for k,v of defaults
@@ -49,4 +39,20 @@ RasterColorizer = (name, scale, opts={})->
   obj.scale = scale
   return obj
 
-module.exports = RasterColorizer
+RasterColorizer = (name, scale, opts={})->
+  opts.extend ?= 0
+
+  if opts.ndivs?
+    tickValues = scale.ticks opts.ndivs
+  else
+    tickValues = scale.domain()
+
+  if opts.extend > 0
+    tickValues.unshift tickValues[0]-opts.extend
+    tickValues.push tickValues[tickValues.length-1]+opts.extend
+
+  console.log tickValues
+
+  ImageStretch name, tickValues, opts, scale
+
+module.exports = {RasterColorizer,ImageStretch}

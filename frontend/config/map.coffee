@@ -38,11 +38,12 @@ parseMML = (data, fileName, cfg={})->
 parseYMML = (txt, fn, cfg)->
   parseMML parsers.yaml(txt), fn, cfg
 
-layerParsers =
+layerParsers = {
   xml: (d)->d
   mml: (d,fn, cfg)->parseMML JSON.parse(d), fn, cfg
   yaml: parseYMML
   ymml: parseYMML
+}
 
 loadCfg = (layer, cfg)->
   if _.isString layer
@@ -61,8 +62,8 @@ loadCfg = (layer, cfg)->
   parser = layerParsers[ext.slice(1)]
   layer.xml = parser txt, fp, cfg
 
-    # Set name from ID if not defined
-    layer.name ?= layer.id
+  # Set name from ID if not defined
+  layer.name ?= layer.id
 
   layer # {xml, **opts}
 
