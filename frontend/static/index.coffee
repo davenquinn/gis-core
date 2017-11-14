@@ -121,6 +121,10 @@ class StaticMap
   transform: (d)=>
     [(d[0]-@extent[0])*@scale,(@extent[3]-d[1])*@scale]
 
+  inverseTransform: (d)=>
+    [d[0]/@scale+@extent[0],
+     @extent[3]-d[1]/@scale]
+
   __setupGeoPath: ->
     # Must be in lat/lon to use geo path
     _proj = @projection
