@@ -1,4 +1,6 @@
-L = require 'leaflet'
+{getLeaflet} = require './util'
+L = getLeaflet()
+
 d3 = null
 
 class DataLayer extends L.SVG

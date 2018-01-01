@@ -46,7 +46,12 @@ class StaticMap
       # We have provided a full mml object
       renderer = new Renderer
       mapData = {name: 'map-style', xml: renderer.render(mapStyle)}
-    console.log mapData
+
+    sz = @size.width
+    if @size.height > sz
+      sz = @size.height
+    maxSize = sz*@imageScale*2
+    @maxSize = @maxSize
 
     @_map = new mapnik.Map @size.width*@imageScale, @size.height*@imageScale
     @canRender = false
@@ -64,7 +69,10 @@ class StaticMap
     @setBounds bbox
     @__render = (opts)=>
       new Promise (res, rej)=>
-        im = new mapnik.Image @size.width*@imageScale, @size.height*@imageScale
+        w = @size.width*@imageScale
+        h = @size.height*@imageScale
+        console.log w,h
+        im = new mapnik.Image w,h
         @_map.render im, opts, (e,m)->
           console.log opts
           rej(e) if e?
@@ -156,10 +164,10 @@ class StaticMap
     _map = @
     return (el)->buildScale(el,_map,opts)
 
-  render: (fn)->
+  render: (fn, overwrite=false)->
     # Render a cacheable map to a filename
     # Only render the map if the file doesn't exist
-    if not fileExists(fn)
+    if not fileExists(fn) or overwrite
       im = @_map.renderSync {format: 'png', scale: @imageScale}
       dir = path.dirname fn
       if not fs.existsSync dir
@@ -192,7 +200,7 @@ class StaticMap
       .then (im)->
         new Promise (res,rej)->
           console.log "Encoded"
-          im.encode 'png', {}, (e,c)->res(c)
+          im.encode 'png', {max_size: 100000}, (e,c)->res(c)
       .then (im)->
         blob = new Blob [im], {type: 'image/png'}
         URL.createObjectURL(blob)

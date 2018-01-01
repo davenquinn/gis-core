@@ -1,5 +1,6 @@
 try
-  L = require "leaflet"
+  h = if window? then 'leaflet' else 'leaflet-headless'
+  L = require h
 catch e
   console.log "Couldn't load leaflet"
 parseConfig = require './config'

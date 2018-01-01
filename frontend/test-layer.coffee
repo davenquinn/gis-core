@@ -1,4 +1,5 @@
-L = require 'leaflet'
+{getLeaflet} = require './util'
+L = getLeaflet()
 
 coordString = (coords)->
   "x: #{coords.x}, y: #{coords.y}, zoom: #{coords.z}"

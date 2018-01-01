@@ -1,4 +1,5 @@
-L = require "leaflet"
+{getLeaflet} = require './util'
+L = getLeaflet()
 proj4 = require "proj4"
 
 setupProjection = (def, options)->

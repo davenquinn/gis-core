@@ -1,6 +1,7 @@
 mapnik = require 'mapnik'
 mapnikPool = require 'mapnik-pool'
-L = require 'leaflet'
+{getLeaflet} = require './util'
+L = getLeaflet()
 
 pooledMapnik = mapnikPool mapnik
 mapnik.register_default_fonts()
