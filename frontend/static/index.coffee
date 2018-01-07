@@ -2,6 +2,7 @@ mapnik = require 'mapnik'
 path = require 'path'
 fs = require 'fs'
 d3 = require 'd3'
+{select, selection} = require 'd3-selection'
 require 'd3-selection-multi'
 {fileExists} = require './util'
 mapnik.register_default_fonts()
@@ -28,12 +29,9 @@ boundsFromEnvelope = (bbox)->
 ECANNOTRENDER = "Can't render – layers could not be loaded."
 
 guardSelection = (el)->
-  if not el.node?
-    el = d3.select el
-  if not el.attrs?
-    ## d3-selection-multi is required be enabled
-    el = d3.select el.node()
-  return el
+  if el.node?
+    el = el.node()
+  return select el
 
 class StaticMap
   constructor: (@size, bbox, @style, extraCfg={})->
