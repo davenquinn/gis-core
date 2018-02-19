@@ -102,8 +102,8 @@ class StaticMap
   boundingPolygon: ->
     bboxPolygon(@_map.extent)
 
-  projection: (d)=>
-    v = @_proj.forward(d)
+  projection: ([x,y,z])=>
+    v = @_proj.forward([x,y])
     @transform(v)
 
   geoDimensions: =>
