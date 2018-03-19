@@ -13,6 +13,6 @@ module.exports = {
   MapnikLayer: require './mapnik-layer'
   Leaflet: L
   StaticMap: require './static'
-  MapStyle: require './map-style'
+  require('./map-style')...
   require('./raster-colorizer')...
 }

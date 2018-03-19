@@ -57,4 +57,4 @@ class MapStyle
   toXml: =>
     cartoRenderer.render @
 
-module.exports = MapStyle
+module.exports = {MapStyle}
