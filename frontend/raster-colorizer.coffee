@@ -15,7 +15,16 @@ defaults = {
 }
 
 ImageStretch = (name, stops=[0,255], opts={}, scale)->
+  opts.min ?= 0
+  opts.max ?= 255
   scale ?= ["black","white"]
+  if scale instanceof Array
+    if stops[0] > opts.min
+      stops.unshift opts.min
+      scale.unshift('black')
+    if stops[stops.length - 1] < opts.max
+      stops.push opts.max
+      scale.push 'white'
   stops = stops.map (val,i)->
     v = if scale instanceof Array then scale[i] else scale(val)
     "    stop(#{val}, #{v})"

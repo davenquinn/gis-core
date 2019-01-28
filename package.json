@@ -15,10 +15,11 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "carto": "^0.15.3",
-    "coffeescript": "next",
+    "coffeescript": "^2.2.4",
     "convex-hull": "^1.0.3",
     "d3": "^4.7.3",
     "d3-convention": "^2.0.0",
+    "d3-jetpack": "^2.0.19",
     "d3-selection-multi": "^1.0.1",
     "js-yaml": "^3.10.0",
     "leaflet": "^1.2.0",
