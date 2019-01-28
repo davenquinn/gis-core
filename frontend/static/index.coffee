@@ -39,12 +39,14 @@ class StaticMap
     Can use bounding box or tuple of urx,ury,llx,lly
     ###
     @imageScale = extraCfg.scale or 2
+    @scaleMap = extraCfg.scaleMap or false
     MPATH = process.env.MAPNIK_STYLES
     @style ?= "ortho"
     extraCfg.layers ?= process.env.MAPNIK_LAYERS
 
     ## Paths to extra CartoCSS stylesheets
     extraCfg.styles ?= []
+
     if _.isString @style
       cfg = path.join(MPATH,"#{@style}.yaml")
       mapData = loadCfg cfg, extraCfg
@@ -79,6 +81,8 @@ class StaticMap
         w = @size.width*@imageScale
         h = @size.height*@imageScale
         console.log w,h
+        if @scaleMap
+          opts.scale ?= @imageScale
         im = new mapnik.Image w,h
         @_map.render im, opts, (e,m)->
           console.log opts
