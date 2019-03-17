@@ -84,6 +84,7 @@ class StaticMap
         if @scaleMap
           opts.scale ?= @imageScale
         im = new mapnik.Image w,h
+        console.log "Starting to render map"
         @_map.render im, opts, (e,m)->
           console.log opts
           rej(e) if e?
@@ -217,7 +218,9 @@ class StaticMap
           console.log "Encoded"
           im.encode 'png', {max_size: 100000}, (e,c)->res(c)
       .then (im)->
-        blob = new Blob [im], {type: 'image/png'}
+        console.log "Creating blob"
+        blob = new Blob [Buffer.from(im)], {type: 'image/png'}
+        console.log "Creating object URL"
         URL.createObjectURL(blob)
 
   waitForImages: =>
@@ -282,8 +285,8 @@ class StaticMap
         .attr 'transform',"translate(10 #{@size.height-10})"
         .call @scaleComponent(opts.scale)
       return @
-
-    p.then @waitForImages
+    return p
+    #p.then @waitForImages
 
   createTiled: (el)->
     el = guardSelection el
