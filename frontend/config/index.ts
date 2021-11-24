@@ -3,15 +3,17 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const fs = require('fs');
-const path = require('path');
-const _ = require('underscore');
+const fs = require("fs");
+const path = require("path");
+const _ = require("underscore");
 
-const parsers = require('./parsers');
-const configureLayer = require('./map');
+const parsers = require("./parsers");
+const configureLayer = require("./map");
 
-module.exports = function(cfg){
-  if (cfg == null) { cfg = {}; }
+module.exports = function (cfg) {
+  if (cfg == null) {
+    cfg = {};
+  }
   if (_.isString(cfg)) {
     const fn = cfg;
     // Returns a configuration object
@@ -20,24 +22,26 @@ module.exports = function(cfg){
     const dir = path.dirname(fn);
 
     const method = parsers[ext.slice(1)];
-    const contents = fs.readFileSync(fn,'utf8');
+    const contents = fs.readFileSync(fn, "utf8");
     cfg = method(contents);
-    if (cfg.basedir == null) { cfg.basedir = dir; }
+    if (cfg.basedir == null) {
+      cfg.basedir = dir;
+    }
   }
 
   const basedir = cfg.basedir || "";
   // Function to resolve pathnames
-  const resolve = function(fn){
+  const resolve = function (fn) {
     if (path.isAbsolute(fn)) {
       return fn;
     } else {
-      return path.join(basedir,fn);
+      return path.join(basedir, fn);
     }
   };
 
   // Check if we have a map config, or a more general
   // configuration file with a `map` section
-  if ((cfg.layers == null)) {
+  if (cfg.layers == null) {
     cfg = cfg.map;
   }
 
@@ -46,7 +50,7 @@ module.exports = function(cfg){
   // Convert from lon,lat representation to
   // leaflet's internal lat,lon
   if (cfg.center != null) {
-    cfg.center = [cfg.center[1],cfg.center[0]];
+    cfg.center = [cfg.center[1], cfg.center[0]];
   }
 
   return cfg;

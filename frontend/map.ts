@@ -8,14 +8,17 @@
  */
 let L;
 try {
-  const h = (typeof window !== 'undefined' && window !== null) ? 'leaflet' : 'leaflet-headless';
+  const h =
+    typeof window !== "undefined" && window !== null
+      ? "leaflet"
+      : "leaflet-headless";
   L = require(h);
 } catch (e) {
   console.log("Couldn't load leaflet");
 }
-const parseConfig = require('./config');
-const MapnikLayer = require('./mapnik-layer');
-const TestLayer = require('./test-layer');
+const parseConfig = require("./config");
+const MapnikLayer = require("./mapnik-layer");
+const TestLayer = require("./test-layer");
 const setupProjection = require("./projection");
 
 const defaultOptions = {
@@ -23,25 +26,29 @@ const defaultOptions = {
   zoom: 0,
   attributionControl: false,
   continuousWorld: true,
-  debounceMoveend: true
+  debounceMoveend: true,
 };
 
 class Map extends L.Map {
-  constructor(el,opts){
+  constructor(el, opts) {
     let k, v;
     this.addMapnikLayers = this.addMapnikLayers.bind(this);
     this.addLayerControl = this.addLayerControl.bind(this);
     this.addScalebar = this.addScalebar.bind(this);
     console.log(opts);
     let c = null;
-    if (c == null) { c = opts.configFile; }
-    if (c == null) { c = opts; }
+    if (c == null) {
+      c = opts.configFile;
+    }
+    if (c == null) {
+      c = opts;
+    }
     const cfg = parseConfig(c);
     // Keep mapnik layer configs separate from
     // other layers (this is probably temporary)
     const lyrs = {};
     for (let lyr of Array.from(cfg.layers)) {
-      lyrs[lyr.name] = new MapnikLayer(lyr.name, lyr.xml, {verbose: true});
+      lyrs[lyr.name] = new MapnikLayer(lyr.name, lyr.xml, { verbose: true });
     }
     const options = {};
     options.mapnikLayers = lyrs;
@@ -51,7 +58,9 @@ class Map extends L.Map {
     options.layers = [];
     for (k in cfg) {
       v = cfg[k];
-      if (options[k] == null) { options[k] = v; }
+      if (options[k] == null) {
+        options[k] = v;
+      }
     }
 
     if (options.projection != null) {
@@ -59,15 +68,14 @@ class Map extends L.Map {
       const projection = setupProjection(s, {
         minResolution: options.resolution.min, // m/px
         maxResolution: options.resolution.max, // m/px
-        bounds: options.bounds
-      }
-      );
+        bounds: options.bounds,
+      });
       options.crs = projection;
     }
 
     for (k in defaultOptions) {
       v = defaultOptions[k];
-      if ((options[k] == null)) {
+      if (options[k] == null) {
         options[k] = v;
       }
     }
@@ -76,14 +84,14 @@ class Map extends L.Map {
     this.addMapnikLayers(options.initLayer || null);
   }
 
-  addMapnikLayers(name){
+  addMapnikLayers(name) {
     let lyr;
     const layers = this.options.mapnikLayers;
     if (name != null) {
       lyr = layers[name];
     }
 
-    if ((lyr == null)) {
+    if (lyr == null) {
       // Add the first layer (arbitrarily)
       for (let k in layers) {
         const l = layers[k];
@@ -97,26 +105,26 @@ class Map extends L.Map {
     return lyr.addTo(this);
   }
 
-  addLayerControl(baseLayers, overlayLayers){
+  addLayerControl(baseLayers, overlayLayers) {
     console.log(this.options);
     const lyrs = this.options.mapnikLayers;
     for (let k in baseLayers) {
       const v = baseLayers[k];
       lyrs[k] = v;
     }
-    const ctl = new L.Control.Layers(lyrs, overlayLayers,
-      {position: "topleft"});
+    const ctl = new L.Control.Layers(lyrs, overlayLayers, {
+      position: "topleft",
+    });
     return ctl.addTo(this);
   }
 
   addScalebar() {
     const scale = new L.Control.Scale({
       maxWidth: 250,
-      imperial: false
+      imperial: false,
     });
     return scale.addTo(this);
   }
 }
-
 
 module.exports = Map;

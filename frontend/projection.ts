@@ -4,14 +4,14 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const {getLeaflet} = require('./util');
+const { getLeaflet } = require("./util");
 const L = getLeaflet();
 const proj4 = require("proj4");
 
-const setupProjection = function(def, options){
+const setupProjection = function (def, options) {
   options = options || {};
-  if (!('resolutions' in options)) {
-    if (!'minResolution' in options) {
+  if (!("resolutions" in options)) {
+    if (!"minResolution" in options) {
       throw "minResolution required if resolutions are not specified";
     }
     const res = [];
@@ -39,40 +39,46 @@ const setupProjection = function(def, options){
 
   // Setup geographic coordinate system
   const geog = {
-    projName: 'longlat',
+    projName: "longlat",
     a: p.datum.a,
     b: p.datum.b,
-    no_defs: true
+    no_defs: true,
   };
   const gp = proj4.Proj(geog);
 
-  const projection = proj4(gp,p);
+  const projection = proj4(gp, p);
 
-  if (!('bounds' in options)) { throw 'bounds required'; }
+  if (!("bounds" in options)) {
+    throw "bounds required";
+  }
   const _bounds = options.bounds
     .map(projection.forward)
-    .map(d => L.point(d[0], d[1]));
+    .map((d) => L.point(d[0], d[1]));
   const bounds = L.bounds(..._bounds);
 
   const Projection = {
     bounds,
-    project(ll){
-      const out = projection.forward([ll.lng,ll.lat]);
-      return new L.Point(out[0],out[1]);
+    project(ll) {
+      const out = projection.forward([ll.lng, ll.lat]);
+      return new L.Point(out[0], out[1]);
     },
-    unproject(pt){
-      const out = projection.inverse([pt.x,pt.y]);
+    unproject(pt) {
+      const out = projection.inverse([pt.x, pt.y]);
       return new L.LatLng(out[1], out[0]);
-    }
+    },
   };
 
   return L.extend({}, L.CRS.Earth, {
-    code: 'IAU:950000',
+    code: "IAU:950000",
     projection: Projection,
     transformation: new L.Transformation(1, -bounds.min.x, -1, bounds.max.y),
-    scale(zoom){ return 1/options.resolutions[zoom]; },
+    scale(zoom) {
+      return 1 / options.resolutions[zoom];
+    },
     wrapLng: null,
-    resolution(zoom){ return options.resolutions[zoom]; }
+    resolution(zoom) {
+      return options.resolutions[zoom];
+    },
   });
 };
 

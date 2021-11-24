@@ -5,13 +5,14 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const {getLeaflet} = require('./util');
+const { getLeaflet } = require("./util");
 const L = getLeaflet();
 
-const coordString = coords => `x: ${coords.x}, y: ${coords.y}, zoom: ${coords.z}`;
+const coordString = (coords) =>
+  `x: ${coords.x}, y: ${coords.y}, zoom: ${coords.z}`;
 
 class TestLayer extends L.GridLayer {
-  constructor(options){
+  constructor(options) {
     this.log = this.log.bind(this);
     this.createTile = this.createTile.bind(this);
     super();
@@ -26,16 +27,16 @@ class TestLayer extends L.GridLayer {
     }
   }
 
-  createTile(coords){
-    const cs =  coordString(coords);
-    const tile = document.createElement('canvas');
-    const ctx = tile.getContext('2d');
-    tile.width = (tile.height = 256);
-    ctx.fillStyle = 'white';
+  createTile(coords) {
+    const cs = coordString(coords);
+    const tile = document.createElement("canvas");
+    const ctx = tile.getContext("2d");
+    tile.width = tile.height = 256;
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, 255, 255);
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = "black";
     ctx.fillText(cs, 20, 20);
-    ctx.strokeStyle = 'red';
+    ctx.strokeStyle = "red";
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(255, 0);
@@ -47,9 +48,9 @@ class TestLayer extends L.GridLayer {
     return tile;
   }
 
-  onAdd(map){
+  onAdd(map) {
     this.log("Adding to ", map);
-    if ((this.options.tileSize == null)) {
+    if (this.options.tileSize == null) {
       this.options.tileSize = map.config.tileSize || 256;
     }
     return super.onAdd(map);
@@ -57,4 +58,3 @@ class TestLayer extends L.GridLayer {
 }
 
 module.exports = TestLayer;
-
