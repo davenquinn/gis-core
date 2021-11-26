@@ -5,14 +5,14 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const mapnik = require("mapnik");
-const mapnikPool = require("mapnik-pool");
-const { GridLayer } = require("leaflet");
+// const mapnik = require("mapnik");
+// const mapnikPool = require("mapnik-pool");
+// const { GridLayer } = require("leaflet");
 
-const pooledMapnik = mapnikPool(mapnik);
-mapnik.register_default_fonts();
-mapnik.register_default_input_plugins();
-mapnik.register_system_fonts();
+// const pooledMapnik = mapnikPool(mapnik);
+// mapnik.register_default_fonts();
+// mapnik.register_default_input_plugins();
+// mapnik.register_system_fonts();
 
 const coordString = (coords) =>
   `x: ${coords.x}, y: ${coords.y}, zoom: ${coords.z}`;
@@ -27,8 +27,8 @@ class MapnikLayer extends GridLayer {
     }
     this.initialize(options);
 
-    this.pool = pooledMapnik.fromString(xml, { size: this.options.tileSize });
-    this.log("Created map pool");
+    //this.pool = pooledMapnik.fromString(xml, { size: this.options.tileSize });
+    //this.log("Created map pool");
   }
 
   log() {
